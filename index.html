@@ -1846,12 +1846,9 @@
     fc.classList.toggle('visible', y > 600);
     // progress bar
     bar.style.width = (Math.min(y / h, 1) * 100) + '%';
-    // orbs (skip on touch for perf)
-    if (!isTouch) {
-      sy = y;
-      applyOrbs();
-      // hero grid parallax desktop only
-      if (heroGrid) heroGrid.style.transform = `translate3d(0,${y * 0.22}px,0)`;
+    // hero grid parallax desktop only (orbs handled by their own listener)
+    if (!isTouch && heroGrid) {
+      heroGrid.style.transform = `translate3d(0,${y * 0.22}px,0)`;
     }
     ticking = false;
   }
