@@ -869,6 +869,132 @@
   @media (prefers-reduced-motion:reduce){
     *, *::before, *::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
   }
+
+  /* ============================================
+     MOBILE ANIMATIONS — mesma energia do desktop
+     ============================================ */
+
+  /* --- tap feedback em todos os cards --- */
+  @media (max-width:960px){
+    .pillar:active{ transform:scale(0.97); border-color:var(--accent); box-shadow:0 0 30px -8px rgba(124,183,255,0.4); }
+    .result-card:active{ transform:scale(0.97); border-color:var(--accent); }
+    .impact-cell:active{ background:var(--bg-2); }
+    .step:active{ background:rgba(16,31,51,0.85); }
+    .faq-item summary:active{ color:var(--accent-2); }
+    .btn:active{ transform:scale(0.97); }
+    .client-logo:active{ opacity:1; color:var(--silver-1); transform:translateY(-2px); }
+
+    /* --- hero mobile: pulse radial automático --- */
+    .hero::after{
+      content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+      background:radial-gradient(ellipse 110% 55% at 50% 90%, rgba(124,183,255,0.14), transparent 65%);
+      animation:heroMobilePulse 5s ease-in-out infinite;
+    }
+    @keyframes heroMobilePulse{ 0%,100%{ opacity:0.6; transform:scaleX(1); } 50%{ opacity:1; transform:scaleX(1.06); } }
+
+    /* --- reveals mais dramáticos em mobile --- */
+    .reveal{ opacity:0; transform:translateY(44px) scale(0.975); }
+    .reveal.in{ opacity:1; transform:translateY(0) scale(1); }
+
+    /* --- shimmer automático nos pillar cards após entrada --- */
+    .pillar.in::before{
+      animation:mobileShimmer 3.5s ease-in-out 0.4s infinite;
+    }
+    @keyframes mobileShimmer{
+      0%{ opacity:0; left:-10%; }
+      40%{ opacity:1; left:50%; }
+      80%{ opacity:0; left:110%; }
+      100%{ opacity:0; left:110%; }
+    }
+
+    /* --- glow automático nos result-cards após entrada --- */
+    .result-card.in::after{
+      animation:mobileCardGlow 4s ease-in-out 0.5s infinite;
+    }
+    @keyframes mobileCardGlow{
+      0%,100%{ transform:scale(1) translate(0,0); opacity:0.5; }
+      50%{ transform:scale(1.6) translate(-14px,14px); opacity:1; }
+    }
+
+    /* --- kpi bars animam quando card entra em view --- */
+    .result-card.in .kpi-bar i{ width:var(--w,70%); }
+
+    /* --- impact icons: bounce de entrada com stagger --- */
+    .impact-grid.in .impact-cell:nth-child(1) .icon{ animation:iconBounce .7s var(--ease-out) 0.05s both; }
+    .impact-grid.in .impact-cell:nth-child(2) .icon{ animation:iconBounce .7s var(--ease-out) 0.12s both; }
+    .impact-grid.in .impact-cell:nth-child(3) .icon{ animation:iconBounce .7s var(--ease-out) 0.19s both; }
+    .impact-grid.in .impact-cell:nth-child(4) .icon{ animation:iconBounce .7s var(--ease-out) 0.26s both; }
+    .impact-grid.in .impact-cell:nth-child(5) .icon{ animation:iconBounce .7s var(--ease-out) 0.33s both; }
+    .impact-grid.in .impact-cell:nth-child(6) .icon{ animation:iconBounce .7s var(--ease-out) 0.40s both; }
+    @keyframes iconBounce{
+      0%{ transform:scale(0.5) rotate(-10deg); opacity:0; }
+      60%{ transform:scale(1.15) rotate(6deg); opacity:1; }
+      100%{ transform:scale(1) rotate(0deg); opacity:1; }
+    }
+
+    /* --- step numbers: contar de baixo pra cima no mobile --- */
+    .method.in .step:nth-child(1){ animation:stepRise .6s var(--ease-out) 0.05s both; }
+    .method.in .step:nth-child(2){ animation:stepRise .6s var(--ease-out) 0.14s both; }
+    .method.in .step:nth-child(3){ animation:stepRise .6s var(--ease-out) 0.23s both; }
+    .method.in .step:nth-child(4){ animation:stepRise .6s var(--ease-out) 0.32s both; }
+    @keyframes stepRise{
+      0%{ opacity:0; transform:translateY(28px); }
+      100%{ opacity:1; transform:translateY(0); }
+    }
+
+    /* --- perfil list: já tem stagger, mas animar também o número --- */
+    .perfil-list.in li .n{ animation:numPop .4s var(--ease-out) both; }
+    .perfil-list.in li:nth-child(1) .n{ animation-delay:0.05s; }
+    .perfil-list.in li:nth-child(2) .n{ animation-delay:0.12s; }
+    .perfil-list.in li:nth-child(3) .n{ animation-delay:0.19s; }
+    .perfil-list.in li:nth-child(4) .n{ animation-delay:0.26s; }
+    .perfil-list.in li:nth-child(5) .n{ animation-delay:0.33s; }
+    @keyframes numPop{
+      0%{ opacity:0; color:var(--accent); transform:scale(0.7); }
+      60%{ color:var(--accent); transform:scale(1.1); }
+      100%{ opacity:1; color:var(--silver-3); transform:scale(1); }
+    }
+
+    /* --- quote block: border esquerda anima --- */
+    .quote-block.in::before{
+      animation:quoteBar 1.2s var(--ease-out) 0.3s both;
+    }
+    @keyframes quoteBar{
+      0%{ transform:scaleY(0); transform-origin:top; }
+      100%{ transform:scaleY(1); transform-origin:top; }
+    }
+
+    /* --- henrick scan mais visível mobile --- */
+    .henrick-photo .scan{
+      background:linear-gradient(180deg, transparent, rgba(124,183,255,0.28), transparent);
+      height:60px;
+    }
+
+    /* --- hero tagline: pisca mais vivo --- */
+    .hero-tagline .pulse-dot{
+      width:8px; height:8px;
+      box-shadow:0 0 18px #5BD787, 0 0 36px rgba(91,215,135,0.5);
+    }
+
+    /* --- floating cta: anel duplo no mobile --- */
+    .float-cta.visible{ opacity:1; transform:scale(1); }
+    .float-cta::before{ display:block; }
+
+    /* --- constellation: mais visível mobile --- */
+    .constellation{ opacity:0.55; }
+
+    /* --- orbs mais vivos mobile --- */
+    .orb{ opacity:0.75 !important; }
+
+    /* --- footer mark no mobile --- */
+    .footer-mark{ animation:gradShift 6s linear infinite; }
+  }
+
+  /* --- grain mais presente mobile --- */
+  @media (max-width:960px){
+    .ambient-grain{ opacity:0.55; }
+  }
+
 </style>
 
 <!-- ===== STRUCTURED DATA / SCHEMA.ORG ===== -->
@@ -2051,6 +2177,38 @@
     splitLines();
   }
   document.querySelectorAll('[data-lang-btn]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.langBtn)));
+
+  // ===== MOBILE: auto-animações baseadas em scroll =====
+  if (isTouch) {
+    // Observar impact-grid para bounce das icons
+    const impactIo = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); impactIo.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.impact-grid, .method').forEach(el => impactIo.observe(el));
+
+    // Touch feedback visual imediato nos cards
+    document.querySelectorAll('.pillar, .result-card, .step, .impact-cell').forEach(el => {
+      el.addEventListener('touchstart', () => el.style.willChange = 'transform', { passive: true });
+      el.addEventListener('touchend', () => { setTimeout(() => el.style.willChange = '', 400); }, { passive: true });
+    });
+
+    // Scroll progress dos orbs no mobile (só scroll, sem mouse)
+    window.addEventListener('scroll', () => {
+      sy = window.scrollY;
+      const pct = sy / (document.documentElement.scrollHeight - window.innerHeight);
+      orbs.forEach((o, i) => {
+        const c = orbConfig[i] || orbConfig[0];
+        o.style.transform = `translate3d(0, ${sy * c.ys}px, 0)`;
+      });
+    }, { passive: true });
+
+    // Constellation mais responsiva no mobile: mais pontos visíveis
+    const mobileConst = document.getElementById('constellation');
+    if (mobileConst) { mobileConst.style.opacity = '0.52'; }
+  }
+
 })();
 </script>
 
