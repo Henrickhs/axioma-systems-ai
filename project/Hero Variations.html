@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Axioma · Hero Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  body{ margin:0; background:#0c1320; font-family:'Inter',sans-serif; color:#E8ECF1; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+  const { DesignCanvas, DCSection, DCArtboard } = window;
+
+  // Common tokens
+  const css = `
+    .hv * { box-sizing:border-box; }
+    .hv {
+      width:100%; height:100%; font-family:'Inter',sans-serif;
+      color:#E8ECF1; position:relative; overflow:hidden;
+    }
+    .hv .eyebrow {
+      font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.32em;
+      text-transform:uppercase; color:#7C8AA0;
+      display:inline-flex; align-items:center; gap:10px;
+    }
+    .hv .eyebrow::before { content:""; width:24px; height:1px; background:#4A5870; }
+    .hv .btn {
+      display:inline-flex; align-items:center; gap:10px;
+      font-size:14px; font-weight:500; padding:13px 22px; border-radius:999px;
+      border:1px solid transparent; cursor:pointer;
+    }
+    .hv .btn-primary {
+      background:linear-gradient(180deg,#E8ECF1,#B8C2D1); color:#0A1626;
+      box-shadow:0 1px 0 rgba(255,255,255,0.4) inset;
+    }
+    .hv .btn-ghost { border-color:#1E3553; color:#E8ECF1; background:transparent; }
+    .hv h1 {
+      font-weight:400; letter-spacing:-0.025em; line-height:1.04; margin:0;
+    }
+    .hv .silver {
+      background:linear-gradient(180deg,#F4F6FA,#B8C2D1 50%,#6E7B91);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    .hv .accent { color:#7CB7FF; font-style:italic; font-family:'Fraunces',serif; font-weight:300; }
+    .hv .header {
+      position:absolute; top:0; left:0; right:0; padding:24px 56px;
+      display:flex; justify-content:space-between; align-items:center; z-index:5;
+    }
+    .hv .brand { display:flex; gap:12px; align-items:center; }
+    .hv .brand img { width:34px; height:34px; border-radius:6px; }
+    .hv .brand .n1 { font-size:13px; font-weight:600; letter-spacing:0.18em; }
+    .hv .brand .n2 { font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.28em; color:#7C8AA0; margin-top:5px; }
+    .hv nav a { font-size:13.5px; color:#B8C2D1; margin:0 18px; }
+  `;
+
+  /* ===== Variant 1: Editorial split ===== */
+  function HeroV1(){
+    return (
+      <div className="hv" style={{background:'#06101F'}}>
+        <style>{css}</style>
+        <div style={{position:'absolute', inset:0,
+          backgroundImage:'linear-gradient(#152740 1px,transparent 1px),linear-gradient(90deg,#152740 1px,transparent 1px)',
+          backgroundSize:'80px 80px',
+          maskImage:'radial-gradient(ellipse 70% 60% at 30% 50%, black 30%, transparent 75%)',
+          WebkitMaskImage:'radial-gradient(ellipse 70% 60% at 30% 50%, black 30%, transparent 75%)',
+          opacity:0.35}}/>
+        <div style={{position:'absolute', inset:0,
+          background:'radial-gradient(ellipse 1100px 600px at 18% 35%, rgba(124,183,255,0.10), transparent 60%)'}}/>
+        <div className="header">
+          <div className="brand">
+            <img src="assets/logo-axioma.jpg"/>
+            <div><div className="n1">AXIOMA</div><div className="n2">SYSTEMS · AI</div></div>
+          </div>
+          <nav><a>Proposta</a><a>Resultados</a><a>Método</a><a>Henrick</a></nav>
+          <button className="btn btn-primary">Solicitar diagnóstico →</button>
+        </div>
+        <div style={{position:'absolute', inset:0, padding:'140px 80px 80px',
+          display:'grid', gridTemplateColumns:'1.15fr 0.85fr', gap:80, alignItems:'center'}}>
+          <div>
+            <span className="eyebrow">Infraestrutura de Crescimento com IA</span>
+            <h1 style={{fontSize:78, marginTop:28}}>
+              <span className="silver">Estruturação de</span><br/>
+              <span className="silver">operações com</span><br/>
+              <span className="accent">IA aplicada.</span>
+            </h1>
+            <p style={{marginTop:32, fontSize:20, color:'#B8C2D1', maxWidth:'54ch', lineHeight:1.55}}>
+              Reduza custo operacional e expanda capacidade de produção — sem aumento proporcional de equipe ou de carga de trabalho.
+            </p>
+            <div style={{display:'flex', gap:14, marginTop:44}}>
+              <button className="btn btn-primary">Solicitar diagnóstico →</button>
+              <button className="btn btn-ghost">Como funciona</button>
+            </div>
+          </div>
+          <div style={{position:'relative', aspectRatio:'1/1', maxWidth:480, marginLeft:'auto'}}>
+            <div style={{position:'absolute', inset:0, borderRadius:24,
+              background:'radial-gradient(ellipse at 30% 30%, rgba(124,183,255,0.18), transparent 65%), linear-gradient(150deg,#0F2138,#06101F 60%,#0A1626)',
+              border:'1px solid #1E3553', overflow:'hidden'}}>
+              <div style={{position:'absolute', inset:0,
+                backgroundImage:'linear-gradient(#152740 1px,transparent 1px),linear-gradient(90deg,#152740 1px,transparent 1px)',
+                backgroundSize:'48px 48px', opacity:0.5}}/>
+              <div style={{position:'absolute', inset:0, margin:'auto', width:'62%', height:'62%',
+                backgroundImage:"url('assets/logo-axioma.jpg')", backgroundSize:'cover', backgroundPosition:'center',
+                borderRadius:14, boxShadow:'0 30px 80px -20px rgba(0,0,0,0.7)'}}/>
+              <div style={{position:'absolute', bottom:24, left:24,
+                fontFamily:'JetBrains Mono', fontSize:10, letterSpacing:'0.28em', color:'#7C8AA0', textTransform:'uppercase'}}>
+                <span style={{display:'inline-block', width:6, height:6, borderRadius:'50%', background:'#5BD787', marginRight:8, boxShadow:'0 0 12px #5BD787'}}/>
+                Sistema operando
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ===== Variant 2: Centered, large declarative typography ===== */
+  function HeroV2(){
+    return (
+      <div className="hv" style={{background:'#06101F'}}>
+        <style>{css}</style>
+        <div style={{position:'absolute', inset:0,
+          background:'radial-gradient(ellipse 900px 600px at 50% 40%, rgba(124,183,255,0.14), transparent 60%)'}}/>
+        <div style={{position:'absolute', inset:0,
+          backgroundImage:'radial-gradient(circle at 1px 1px, #1E3553 1px, transparent 0)',
+          backgroundSize:'40px 40px',
+          maskImage:'radial-gradient(ellipse 60% 60% at center, black 30%, transparent 75%)',
+          WebkitMaskImage:'radial-gradient(ellipse 60% 60% at center, black 30%, transparent 75%)',
+          opacity:0.5}}/>
+        <div className="header">
+          <div className="brand">
+            <img src="assets/logo-axioma.jpg"/>
+            <div><div className="n1">AXIOMA</div><div className="n2">SYSTEMS · AI</div></div>
+          </div>
+          <nav><a>Proposta</a><a>Resultados</a><a>Método</a><a>Henrick</a></nav>
+          <button className="btn btn-primary">Solicitar diagnóstico →</button>
+        </div>
+        <div style={{position:'absolute', inset:0, padding:'160px 80px 80px',
+          display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center'}}>
+          <img src="assets/logo-axioma.jpg" style={{width:88, height:88, borderRadius:14, marginBottom:36, boxShadow:'0 20px 50px -10px rgba(0,0,0,0.7)'}}/>
+          <span className="eyebrow" style={{margin:'0 auto'}}>Infraestrutura de Crescimento com IA</span>
+          <h1 style={{fontSize:96, marginTop:32, maxWidth:'18ch'}}>
+            <span className="silver">A IA entra na operação </span>
+            <span className="accent">sem virar experimento</span>
+            <span className="silver">.</span>
+          </h1>
+          <p style={{marginTop:36, fontSize:22, color:'#B8C2D1', maxWidth:'58ch', lineHeight:1.5}}>
+            Estruturamos operações empresariais com IA aplicada — para reduzir custo, padronizar produção e expandir capacidade sem aumentar equipe.
+          </p>
+          <div style={{display:'flex', gap:14, marginTop:48}}>
+            <button className="btn btn-primary">Solicitar diagnóstico →</button>
+            <button className="btn btn-ghost">Ver casos reais</button>
+          </div>
+          <div style={{display:'flex', gap:48, marginTop:80, paddingTop:32, borderTop:'1px solid #152740',
+            fontFamily:'JetBrains Mono', fontSize:11, letterSpacing:'0.22em', color:'#7C8AA0', textTransform:'uppercase'}}>
+            <div>~80% redução · Direito</div>
+            <div>2× capacidade · Marketing</div>
+            <div>04+ anos · IA aplicada</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ===== Variant 3: Henrick foreground — personal authority ===== */
+  function HeroV3(){
+    return (
+      <div className="hv" style={{background:'#06101F'}}>
+        <style>{css}</style>
+        <div className="header">
+          <div className="brand">
+            <img src="assets/logo-axioma.jpg"/>
+            <div><div className="n1">AXIOMA</div><div className="n2">SYSTEMS · AI</div></div>
+          </div>
+          <nav><a>Proposta</a><a>Resultados</a><a>Método</a><a>Henrick</a></nav>
+          <button className="btn btn-primary">Solicitar diagnóstico →</button>
+        </div>
+
+        {/* Right photo column */}
+        <div style={{position:'absolute', top:0, right:0, bottom:0, width:'46%',
+          backgroundImage:"url('assets/henrick.jpg')",
+          backgroundSize:'cover', backgroundPosition:'center top'}}/>
+        <div style={{position:'absolute', top:0, right:0, bottom:0, width:'46%',
+          background:'linear-gradient(270deg, transparent 30%, rgba(6,16,31,0.85) 100%)'}}/>
+
+        <div style={{position:'absolute', inset:0, padding:'140px 80px 80px',
+          display:'grid', gridTemplateColumns:'1fr 1fr', alignItems:'center'}}>
+          <div>
+            <span className="eyebrow">Henrick Nantes · Axioma Systems AI</span>
+            <h1 style={{fontSize:72, marginTop:28, lineHeight:1.05}}>
+              <span className="silver">Quatro anos</span><br/>
+              <span className="silver">estudando IA.</span><br/>
+              <span className="accent">Aplicada à sua operação.</span>
+            </h1>
+            <p style={{marginTop:32, fontSize:19, color:'#B8C2D1', maxWidth:'48ch', lineHeight:1.55}}>
+              Não vendo prompts genéricos nem ferramentas soltas. Estruturo a infraestrutura operacional com IA aplicada — reduzindo custo e expandindo capacidade sem aumento de equipe.
+            </p>
+            <div style={{display:'flex', gap:14, marginTop:40}}>
+              <button className="btn btn-primary">Conversar comigo →</button>
+              <button className="btn btn-ghost">Ver método</button>
+            </div>
+            <div style={{marginTop:56, display:'flex', gap:36, paddingTop:24, borderTop:'1px solid #152740'}}>
+              <div>
+                <div style={{fontFamily:'Inter', fontWeight:300, fontSize:42, letterSpacing:'-0.02em'}}>~80<span style={{fontSize:24, opacity:0.6}}>%</span></div>
+                <div style={{fontFamily:'JetBrains Mono', fontSize:10, letterSpacing:'0.22em', color:'#7C8AA0', marginTop:8, textTransform:'uppercase'}}>Redução · Direito</div>
+              </div>
+              <div>
+                <div style={{fontFamily:'Inter', fontWeight:300, fontSize:42, letterSpacing:'-0.02em'}}>2×</div>
+                <div style={{fontFamily:'JetBrains Mono', fontSize:10, letterSpacing:'0.22em', color:'#7C8AA0', marginTop:8, textTransform:'uppercase'}}>Capacidade · Marketing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Henrick name plate */}
+        <div style={{position:'absolute', bottom:48, right:80,
+          padding:'14px 20px', border:'1px solid #1E3553', borderRadius:10, background:'rgba(10,22,38,0.7)',
+          backdropFilter:'blur(10px)', textAlign:'right'}}>
+          <div style={{fontSize:16, fontWeight:500}}>Henrick Nantes</div>
+          <div style={{fontFamily:'JetBrains Mono', fontSize:9.5, letterSpacing:'0.22em', color:'#7C8AA0', marginTop:6, textTransform:'uppercase'}}>
+            Arquiteto · Infraestrutura com IA
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function App(){
+    return (
+      <DesignCanvas title="Axioma · Hero Variations" subtitle="Três direções para o hero — clique para abrir em foco">
+        <DCSection id="heroes" title="Hero · variações">
+          <DCArtboard id="v1" label="V1 — Editorial Split (logo)" width={1440} height={900}><HeroV1/></DCArtboard>
+          <DCArtboard id="v2" label="V2 — Centered Statement" width={1440} height={900}><HeroV2/></DCArtboard>
+          <DCArtboard id="v3" label="V3 — Henrick Foreground" width={1440} height={900}><HeroV3/></DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

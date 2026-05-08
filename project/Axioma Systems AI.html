@@ -1,0 +1,1501 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Axioma Systems AI · Infraestrutura de Crescimento com IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg-0:#06101F; --bg-1:#0A1626; --bg-2:#101F33; --bg-3:#162B45;
+    --line:#1E3553; --line-soft:#152740;
+    --silver-1:#E8ECF1; --silver-2:#B8C2D1; --silver-3:#7C8AA0; --silver-4:#4A5870;
+    --metal-hi:#D6DCE4; --metal-lo:#6E7B91;
+    --accent:#7CB7FF; --accent-2:#A8C7FF;
+    --max:1240px;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg-0); color:var(--silver-1); }
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family:'Inter',system-ui,sans-serif; font-size:17px; line-height:1.55;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden; cursor:none;
+  }
+  ::selection{ background:#1E3553; color:#fff; }
+  a{ color:inherit; text-decoration:none; }
+  button{ cursor:none; }
+  a, button, summary, input, textarea, select { cursor:none; }
+
+  /* ----- custom cursor ----- */
+  .cursor-dot, .cursor-ring{
+    position:fixed; top:0; left:0; pointer-events:none; z-index:9999;
+    transform:translate(-50%,-50%); transition:opacity .25s, width .25s, height .25s;
+    mix-blend-mode:screen;
+  }
+  .cursor-dot{ width:6px; height:6px; background:var(--accent); border-radius:50%; box-shadow:0 0 12px var(--accent); }
+  .cursor-ring{
+    width:36px; height:36px; border:1px solid rgba(124,183,255,0.55);
+    border-radius:50%; transition:transform .15s ease-out, width .25s, height .25s, border-color .25s;
+  }
+  body.hover-link .cursor-ring{ width:64px; height:64px; border-color:var(--accent); background:rgba(124,183,255,0.06); }
+  body.hover-link .cursor-dot{ opacity:0; }
+  @media (hover:none), (max-width:960px){
+    body, a, button, summary, input, textarea, select { cursor:auto; }
+    .cursor-dot, .cursor-ring{ display:none; }
+  }
+
+  .mono{ font-family:'JetBrains Mono',monospace; letter-spacing:0.04em; }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.32em;
+    text-transform:uppercase; color:var(--silver-3);
+    display:inline-flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width:24px; height:1px; background:var(--silver-4); transition:width .6s ease; }
+  .reveal.in .eyebrow::before, .eyebrow.in::before{ width:48px; }
+
+  h1,h2,h3,h4{ font-family:'Inter',sans-serif; font-weight:500; letter-spacing:-0.018em; margin:0; }
+  h1{ font-size:clamp(40px,5.4vw,82px); line-height:1.04; letter-spacing:-0.025em; font-weight:400; }
+  h2{ font-size:clamp(32px,3.6vw,52px); line-height:1.1; letter-spacing:-0.02em; font-weight:400; }
+  h3{ font-size:22px; line-height:1.25; font-weight:500; }
+  h4{ font-size:15px; line-height:1.3; font-weight:500; }
+  p{ margin:0; color:var(--silver-2); }
+  .lead{ font-size:19px; line-height:1.6; color:var(--silver-2); max-width:62ch; }
+
+  .silver{ background:linear-gradient(180deg,#F4F6FA 0%,#B8C2D1 50%,#6E7B91 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .accent{ color:var(--accent); font-style:italic; font-family:'Fraunces',serif; font-weight:300; }
+  .grad-shift{
+    background:linear-gradient(120deg,#F4F6FA,#7CB7FF,#B8C2D1,#7CB7FF,#F4F6FA);
+    background-size:300% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:gradShift 8s linear infinite;
+  }
+  @keyframes gradShift{ 0%{ background-position:0% 50%; } 100%{ background-position:300% 50%; } }
+
+  .wrap{ max-width:var(--max); margin:0 auto; padding:0 36px; position:relative; z-index:2; }
+  section{ position:relative; }
+
+  /* ===== HEADER ===== */
+  header.site{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%);
+    background:rgba(6,16,31,0.72);
+    border-bottom:1px solid transparent;
+    transition:border-color .3s, background .3s;
+  }
+  header.site.scrolled{ border-bottom-color:var(--line-soft); background:rgba(6,16,31,0.9); }
+  header.site .inner{
+    max-width:var(--max); margin:0 auto; padding:18px 36px;
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand img{ width:34px; height:34px; border-radius:6px; object-fit:cover; transition:transform .6s cubic-bezier(.2,.8,.3,1); }
+  .brand:hover img{ transform:rotate(-8deg) scale(1.08); }
+  .brand-text{ display:flex; flex-direction:column; line-height:1; }
+  .brand-text .n1{ font-size:13px; font-weight:600; letter-spacing:0.18em; color:var(--silver-1); }
+  .brand-text .n2{ font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.28em; color:var(--silver-3); margin-top:5px; text-transform:uppercase; }
+
+  nav.primary{ display:flex; gap:30px; }
+  nav.primary a{ font-size:13.5px; color:var(--silver-2); position:relative; transition:color .2s; }
+  nav.primary a::after{ content:""; position:absolute; left:0; bottom:-6px; width:0; height:1px; background:var(--accent); transition:width .3s; }
+  nav.primary a:hover{ color:var(--silver-1); }
+  nav.primary a:hover::after{ width:100%; }
+
+  .header-right{ display:flex; align-items:center; gap:16px; }
+  .lang-toggle{ display:flex; align-items:center; gap:2px;
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.18em;
+    border:1px solid var(--line); border-radius:999px; padding:5px 6px; color:var(--silver-3); }
+  .lang-toggle button{ background:transparent; border:none; color:inherit; font:inherit; padding:4px 10px; border-radius:999px; transition:all .2s; }
+  .lang-toggle button.active{ background:var(--bg-3); color:var(--silver-1); }
+
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    font-size:14px; font-weight:500; padding:13px 22px; border-radius:999px;
+    transition:transform .25s, box-shadow .25s, background .25s, border-color .25s;
+    border:1px solid transparent; white-space:nowrap; position:relative; overflow:hidden;
+  }
+  .btn .arrow{ transition:transform .3s cubic-bezier(.2,.8,.3,1); }
+  .btn:hover .arrow{ transform:translateX(5px); }
+  .btn-primary{
+    background:linear-gradient(180deg,#E8ECF1,#B8C2D1); color:#0A1626;
+    box-shadow:0 1px 0 rgba(255,255,255,0.4) inset, 0 8px 22px -8px rgba(124,183,255,0.4);
+  }
+  .btn-primary::before{
+    content:""; position:absolute; top:0; left:-120%; width:60%; height:100%;
+    background:linear-gradient(110deg, transparent, rgba(255,255,255,0.6), transparent);
+    transition:left .8s cubic-bezier(.2,.8,.3,1);
+  }
+  .btn-primary:hover::before{ left:140%; }
+  .btn-primary:hover{ box-shadow:0 1px 0 rgba(255,255,255,0.6) inset, 0 14px 36px -8px rgba(124,183,255,0.7); transform:translateY(-1px); }
+  .btn-ghost{ background:transparent; border-color:var(--line); color:var(--silver-1); }
+  .btn-ghost:hover{ border-color:var(--silver-3); background:rgba(255,255,255,0.03); }
+
+  /* ===== ambient backgrounds (per section) ===== */
+  .bg-canvas{ position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+
+  /* ===== global ambient orbs (scroll parallax) ===== */
+  .ambient-stage{
+    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+    will-change:transform;
+  }
+  .ambient-stage .orb{
+    position:absolute; border-radius:50%; filter:blur(90px); opacity:0.55;
+    will-change:transform; mix-blend-mode:screen;
+  }
+  .orb.o1{ width:760px; height:760px; left:-180px; top:6%;
+    background:radial-gradient(circle, rgba(124,183,255,0.55), transparent 65%); }
+  .orb.o2{ width:620px; height:620px; right:-120px; top:38%;
+    background:radial-gradient(circle, rgba(168,199,255,0.35), transparent 65%); }
+  .orb.o3{ width:880px; height:880px; left:30%; top:78%;
+    background:radial-gradient(circle, rgba(80,140,220,0.4), transparent 65%); }
+  .orb.o4{ width:540px; height:540px; right:10%; top:140%;
+    background:radial-gradient(circle, rgba(124,183,255,0.45), transparent 65%); }
+  .orb.o5{ width:700px; height:700px; left:-10%; top:200%;
+    background:radial-gradient(circle, rgba(180,210,255,0.35), transparent 65%); }
+  .ambient-grain{
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.4;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.49 0 0 0 0 0.72 0 0 0 0 1 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode:overlay;
+  }
+  body > * { position:relative; z-index:2; }
+  .ambient-stage, .ambient-grain { z-index:0 !important; }
+
+  /* ===== HERO ===== */
+  .hero{ padding:160px 0 120px; position:relative; overflow:hidden; }
+  .hero::before{
+    content:""; position:absolute; inset:0; z-index:1;
+    background:
+      radial-gradient(ellipse 1100px 600px at 18% 35%, rgba(124,183,255,0.13), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 85% 70%, rgba(124,183,255,0.05), transparent 60%);
+  }
+  .hero .grid-bg{
+    position:absolute; inset:0; z-index:1;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size:80px 80px;
+    mask-image:radial-gradient(ellipse 70% 60% at center, black 30%, transparent 75%);
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at center, black 30%, transparent 75%);
+    opacity:0.4;
+    animation:gridDrift 30s linear infinite;
+  }
+  @keyframes gridDrift{
+    0%{ background-position:0 0, 0 0; }
+    100%{ background-position:80px 80px, 80px 80px; }
+  }
+  .hero-inner{ max-width:880px; }
+  .hero-sub{ margin-top:28px; font-size:clamp(17px,1.7vw,21px); line-height:1.55; color:var(--silver-2); max-width:48ch; }
+  .hero-cta-row{ display:flex; gap:14px; margin-top:40px; flex-wrap:wrap; }
+  .hero-tagline{
+    margin-top:64px; padding-top:24px; border-top:1px solid var(--line-soft);
+    display:flex; align-items:center; gap:14px;
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.28em;
+    color:var(--silver-3); text-transform:uppercase; flex-wrap:wrap;
+  }
+  .hero-tagline .pulse-dot{ width:6px; height:6px; border-radius:50%; background:#5BD787; box-shadow:0 0 12px #5BD787; animation:pulse 2s infinite ease-in-out; }
+  @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.4; transform:scale(0.7);} }
+
+  /* split-letters animation for h1 */
+  .split-word{ display:inline-block; overflow:hidden; vertical-align:bottom; }
+  .split-word > span{
+    display:inline-block; transform:translateY(110%);
+    animation:rise .9s cubic-bezier(.22,.85,.3,1) forwards;
+    background:inherit; -webkit-background-clip:inherit; background-clip:inherit;
+    color:inherit; font-style:inherit; font-family:inherit; font-weight:inherit;
+  }
+  .split-word.silver > span{
+    background:linear-gradient(180deg,#F4F6FA 0%,#B8C2D1 50%,#6E7B91 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .split-word.accent > span{
+    color:var(--accent); font-style:italic; font-family:'Fraunces',serif; font-weight:300;
+    background:none; -webkit-text-fill-color:var(--accent);
+  }
+  @keyframes rise{ to{ transform:translateY(0); } }
+
+  /* hero visual (legacy, hidden) */
+  .hero-visual{ display:none; }
+  ._hv_legacy{ position:relative; aspect-ratio:1/1; max-width:480px; margin-left:auto; }
+  .hero-visual .frame{
+    position:absolute; inset:0; border-radius:24px; overflow:hidden;
+    background:
+      radial-gradient(ellipse at 30% 30%, rgba(124,183,255,0.22), transparent 65%),
+      linear-gradient(150deg,#0F2138 0%,#06101F 60%,#0A1626 100%);
+    border:1px solid var(--line);
+  }
+  .hero-visual .frame::before{
+    content:""; position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--line-soft) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+    background-size:48px 48px; opacity:0.5;
+  }
+  .hero-visual svg.orbits{ position:absolute; inset:0; width:100%; height:100%; z-index:2; }
+  .hero-visual .corner{ position:absolute; width:18px; height:18px; border:1px solid var(--silver-3); z-index:3; }
+  .hero-visual .corner.tl{ top:18px; left:18px; border-right:none; border-bottom:none; }
+  .hero-visual .corner.tr{ top:18px; right:18px; border-left:none; border-bottom:none; }
+  .hero-visual .corner.bl{ bottom:18px; left:18px; border-right:none; border-top:none; }
+  .hero-visual .corner.br{ bottom:18px; right:18px; border-left:none; border-top:none; }
+  .hero-visual .logo-img{
+    position:absolute; inset:0; margin:auto; width:54%; height:54%;
+    background-image:url('assets/logo-axioma.jpg');
+    background-size:cover; background-position:center; border-radius:14px;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06), 0 0 60px -10px rgba(124,183,255,0.4);
+    z-index:3;
+    animation:logoFloat 6s ease-in-out infinite;
+  }
+  @keyframes logoFloat{ 0%,100%{ transform:translateY(-4px); } 50%{ transform:translateY(4px); } }
+  .hero-visual .label{
+    position:absolute; bottom:24px; left:24px; z-index:3;
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.28em;
+    color:var(--silver-3); text-transform:uppercase;
+  }
+  .hero-visual .dot{
+    display:inline-block; width:6px; height:6px; border-radius:50%;
+    background:#5BD787; margin-right:8px; box-shadow:0 0 12px #5BD787;
+    animation:pulse 2s infinite ease-in-out;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.4; transform:scale(0.7);} }
+  .orbit-node{ animation:orbitSpin 18s linear infinite; transform-origin:240px 240px; }
+  .orbit-node.fast{ animation-duration:11s; animation-direction:reverse; }
+  @keyframes orbitSpin{ from{ transform:rotate(0); } to{ transform:rotate(360deg); } }
+
+  /* ===== general section ===== */
+  .section{ padding:120px 0; position:relative; }
+  .section + .section{ border-top:1px solid var(--line-soft); }
+  .section-head{ display:grid; grid-template-columns:1fr 1.6fr; gap:60px; margin-bottom:72px; align-items:start; }
+  .section-head h2{ max-width:18ch; }
+
+  /* ===== PROPOSTA bg: floating data grid ===== */
+  #proposta .bg-canvas::before{
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(ellipse 800px 400px at 80% 20%, rgba(124,183,255,0.08), transparent 60%);
+  }
+  .quote-block{
+    margin-top:64px; padding:48px 56px;
+    border:1px solid var(--line); border-radius:18px;
+    background:linear-gradient(180deg,var(--bg-2) 0%,var(--bg-1) 100%);
+    position:relative; overflow:hidden;
+  }
+  .quote-block::before{ content:""; position:absolute; left:0; top:24px; bottom:24px; width:2px;
+    background:linear-gradient(180deg,var(--accent),transparent); }
+  .quote-block::after{
+    content:""; position:absolute; right:-100px; top:-100px; width:300px; height:300px;
+    background:radial-gradient(circle,rgba(124,183,255,0.12),transparent 70%);
+    animation:floatPulse 7s ease-in-out infinite;
+  }
+  @keyframes floatPulse{ 0%,100%{ transform:translate(0,0) scale(1);} 50%{ transform:translate(-20px,20px) scale(1.1);} }
+  .quote-block p{ font-family:'Fraunces',serif; font-weight:300; font-size:28px; line-height:1.4; color:var(--silver-1); letter-spacing:-0.01em; max-width:42ch; position:relative; z-index:2; }
+  .quote-block .who{ margin-top:24px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.24em; color:var(--silver-3); text-transform:uppercase; position:relative; z-index:2; }
+
+  /* ===== PILARES bg: connection lines ===== */
+  #pilares{ background:linear-gradient(180deg, transparent 0%, rgba(124,183,255,0.025) 50%, transparent 100%); }
+  .pillars{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .pillar{
+    padding:36px 32px 40px; background:var(--bg-1);
+    border:1px solid var(--line-soft); border-radius:18px;
+    transition:transform .4s cubic-bezier(.2,.8,.3,1), border-color .3s, background .3s, box-shadow .4s;
+    position:relative; overflow:hidden;
+  }
+  .pillar::before{
+    content:""; position:absolute; top:0; left:-50%; width:120%; height:1px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    opacity:0; transition:opacity .4s, left .8s;
+  }
+  .pillar:hover{ border-color:var(--line); background:var(--bg-2); transform:translateY(-6px); box-shadow:0 24px 60px -20px rgba(124,183,255,0.25); }
+  .pillar:hover::before{ opacity:1; left:50%; }
+  .pillar .num{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.28em; color:var(--silver-3); margin-bottom:36px; display:flex; justify-content:space-between; align-items:center; }
+  .pillar .badge{ width:36px; height:36px; border-radius:8px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--accent); transition:transform .4s, border-color .3s; }
+  .pillar:hover .badge{ transform:rotate(8deg) scale(1.1); border-color:var(--accent); }
+  .pillar h3{ margin-bottom:14px; }
+  .pillar p{ color:var(--silver-2); font-size:15.5px; line-height:1.6; }
+
+  /* ===== RESULTADOS bg: rising bars ===== */
+  #resultados .bg-canvas{ display:flex; align-items:flex-end; justify-content:flex-end; padding:0 5%; opacity:0.25; }
+  .bars{ display:flex; gap:14px; align-items:flex-end; height:60%; }
+  .bars span{
+    width:32px; background:linear-gradient(180deg,var(--accent),transparent);
+    border-top:1px solid var(--accent); border-radius:2px 2px 0 0;
+    animation:barRise 4s ease-in-out infinite alternate;
+  }
+  .bars span:nth-child(1){ height:30%; animation-delay:0s; }
+  .bars span:nth-child(2){ height:55%; animation-delay:0.4s; }
+  .bars span:nth-child(3){ height:80%; animation-delay:0.8s; }
+  .bars span:nth-child(4){ height:45%; animation-delay:1.2s; }
+  .bars span:nth-child(5){ height:65%; animation-delay:1.6s; }
+  @keyframes barRise{ from{ opacity:0.4; transform:scaleY(0.85);} to{ opacity:0.9; transform:scaleY(1);} }
+
+  .results{ display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-bottom:48px; }
+  .result-card{
+    padding:48px 44px; border:1px solid var(--line); border-radius:20px;
+    background:linear-gradient(160deg,var(--bg-2) 0%,var(--bg-1) 100%);
+    position:relative; overflow:hidden; transition:transform .4s, border-color .3s;
+  }
+  .result-card::after{
+    content:""; position:absolute; right:-80px; top:-80px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle,rgba(124,183,255,0.15),transparent 70%);
+    transition:transform .8s cubic-bezier(.2,.8,.3,1);
+  }
+  .result-card:hover{ transform:translateY(-4px); border-color:var(--accent); }
+  .result-card:hover::after{ transform:scale(1.4) translate(-10px,10px); }
+  .result-card .case{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.3em; color:var(--silver-3); text-transform:uppercase; margin-bottom:18px; }
+  .result-card .label{ font-size:14px; color:var(--silver-2); margin-bottom:12px; }
+  .result-card .number{
+    font-family:'Inter',sans-serif; font-weight:300; font-size:120px; line-height:0.95; letter-spacing:-0.04em;
+    background:linear-gradient(180deg,#F4F6FA 0%,#6E7B91 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:20px;
+  }
+  .result-card .number .pct{ font-size:48px; vertical-align:super; opacity:0.7; margin-left:4px; }
+  .result-card h3{ margin-bottom:14px; max-width:22ch; }
+  .result-card p{ color:var(--silver-2); font-size:15px; line-height:1.6; max-width:48ch; }
+
+  .principle{
+    padding:44px 48px; border:1px solid var(--line-soft); border-radius:18px;
+    background:var(--bg-1); display:grid; grid-template-columns:1fr 2fr; gap:48px; align-items:center;
+  }
+  .principle h4{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.28em; color:var(--silver-3); text-transform:uppercase; }
+  .principle p{ font-size:18px; line-height:1.55; color:var(--silver-1); font-weight:300; max-width:60ch; }
+
+  /* ===== IMPACTO bg: radial waves ===== */
+  #impacto .bg-canvas svg{ position:absolute; inset:0; width:100%; height:100%; opacity:0.35; }
+  .impact-grid{
+    display:grid; grid-template-columns:repeat(3,1fr);
+    border:1px solid var(--line-soft); border-radius:18px;
+    overflow:hidden; background:rgba(10,22,38,0.6); backdrop-filter:blur(8px);
+  }
+  .impact-cell{
+    padding:40px 36px; border-right:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);
+    transition:background .25s, transform .3s; position:relative;
+  }
+  .impact-cell:hover{ background:var(--bg-2); }
+  .impact-cell:nth-child(3n){ border-right:none; }
+  .impact-cell:nth-last-child(-n+3){ border-bottom:none; }
+  .impact-cell .icon{
+    width:42px; height:42px; border-radius:10px; border:1px solid var(--line); background:var(--bg-2);
+    display:flex; align-items:center; justify-content:center; color:var(--accent); margin-bottom:24px;
+    transition:transform .4s, border-color .3s, box-shadow .4s;
+  }
+  .impact-cell:hover .icon{ transform:rotate(8deg) scale(1.1); border-color:var(--accent); box-shadow:0 0 24px -4px rgba(124,183,255,0.5); }
+  .impact-cell h4{ font-size:18px; font-weight:500; margin-bottom:12px; }
+  .impact-cell p{ font-size:14.5px; color:var(--silver-2); line-height:1.6; }
+
+  /* ===== PERFIL bg: dashed connector ===== */
+  .perfil-grid{ display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+  .perfil-list{ display:flex; flex-direction:column; }
+  .perfil-list li{
+    list-style:none; padding:24px 0; border-bottom:1px solid var(--line-soft);
+    display:grid; grid-template-columns:32px 1fr; gap:18px; align-items:start;
+    font-size:17px; line-height:1.5; color:var(--silver-1);
+    transition:padding-left .3s, color .3s;
+  }
+  .perfil-list li:hover{ padding-left:8px; color:var(--silver-1); }
+  .perfil-list li:last-child{ border-bottom:none; }
+  .perfil-list li .n{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--silver-3); padding-top:3px; letter-spacing:0.1em; transition:color .3s; }
+  .perfil-list li:hover .n{ color:var(--accent); }
+
+  /* ===== MÉTODO bg: animated path ===== */
+  #metodo{ overflow:hidden; }
+  #metodo .bg-canvas{ opacity:0.5; }
+  .method{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-top:1px solid var(--line); position:relative; z-index:2; }
+  .step{
+    padding:36px 28px 32px; border-right:1px solid var(--line-soft); border-bottom:1px solid var(--line);
+    position:relative; transition:background .3s; background:rgba(6,16,31,0.4); backdrop-filter:blur(6px);
+  }
+  .step:last-child{ border-right:none; }
+  .step:hover{ background:rgba(16,31,51,0.7); }
+  .step .step-num{
+    font-family:'Inter',sans-serif; font-weight:300; font-size:48px; color:var(--silver-4);
+    letter-spacing:-0.02em; margin-bottom:24px; line-height:1; transition:color .3s;
+  }
+  .step:hover .step-num{ color:var(--accent); }
+  .step h4{ font-size:18px; margin-bottom:12px; font-weight:500; }
+  .step p{ color:var(--silver-2); font-size:14.5px; line-height:1.6; }
+
+  /* ===== CLIENTS ===== */
+  .clients-section{ padding:60px 0 30px; position:relative; }
+  .clients-row{ display:flex; flex-direction:column; gap:32px; align-items:center; text-align:center; }
+  .clients-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:36px; align-items:center; width:100%; }
+  .client-logo{ height:54px; display:flex; align-items:center; justify-content:center; color:var(--silver-3); opacity:0.7; transition:opacity .35s, color .35s, transform .35s cubic-bezier(.2,.8,.3,1); }
+  .client-logo svg{ max-width:100%; max-height:100%; }
+  .client-logo:hover{ color:var(--silver-1); opacity:1; transform:translateY(-2px); }
+  @media (max-width:760px){ .clients-grid{ grid-template-columns:repeat(2,1fr); gap:28px 36px; } .client-logo:nth-child(5){ grid-column:1 / -1; max-width:60%; margin:0 auto; } }
+
+  /* ===== HENRICK ===== */
+  #henrick{ background:linear-gradient(180deg, transparent 0%, rgba(10,22,38,0.6) 100%); }
+  .about-henrick{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:64px; align-items:center; }
+  .henrick-photo{
+    aspect-ratio:1/1.15; border-radius:18px; overflow:hidden; position:relative;
+    background-image:url('assets/henrick.jpg'); background-size:cover; background-position:center top;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,0.7), 0 0 0 1px var(--line);
+    transition:transform .6s cubic-bezier(.2,.8,.3,1);
+  }
+  .henrick-photo:hover{ transform:scale(1.015); }
+  .henrick-photo::before{
+    content:""; position:absolute; inset:0; z-index:2;
+    background:linear-gradient(135deg, transparent 60%, rgba(124,183,255,0.08));
+    pointer-events:none;
+  }
+  .henrick-photo::after{
+    content:""; position:absolute; inset:0; z-index:1;
+    background:linear-gradient(180deg, transparent 50%, rgba(6,16,31,0.55) 100%);
+  }
+  .henrick-photo .scan{
+    position:absolute; left:0; right:0; height:80px; z-index:3;
+    background:linear-gradient(180deg, transparent, rgba(124,183,255,0.15), transparent);
+    animation:scan 4s linear infinite;
+  }
+  @keyframes scan{ 0%{ top:-80px; } 100%{ top:100%; } }
+  .henrick-photo .tag{
+    position:absolute; bottom:20px; left:20px; right:20px; z-index:4;
+    display:flex; justify-content:space-between; align-items:end; color:var(--silver-1);
+  }
+  .henrick-photo .tag .name{ font-size:18px; font-weight:500; letter-spacing:-0.01em; }
+  .henrick-photo .tag .role{ font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.24em; color:var(--silver-2); text-transform:uppercase; max-width:14ch; text-align:right; }
+  .henrick-bio h2{ margin-bottom:28px; max-width:18ch; }
+  .henrick-bio p{ font-size:18px; line-height:1.65; color:var(--silver-2); margin-bottom:18px; }
+  .henrick-bio p:first-of-type{ color:var(--silver-1); }
+  .henrick-bio .stats{ margin-top:36px; display:grid; grid-template-columns:repeat(3,1fr); gap:32px; padding-top:32px; border-top:1px solid var(--line-soft); }
+  .henrick-bio .stats .v{ font-family:'Inter',sans-serif; font-weight:300; font-size:42px; line-height:1; color:var(--silver-1); letter-spacing:-0.02em; }
+  .henrick-bio .stats .k{ font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--silver-3); letter-spacing:0.22em; text-transform:uppercase; margin-top:10px; display:block; max-width:18ch; }
+
+  /* ===== DIAGNÓSTICO ===== */
+  .diag-section{ padding:130px 0; position:relative; overflow:hidden;
+    background:linear-gradient(180deg,var(--bg-0) 0%,#08152A 50%,var(--bg-0) 100%); }
+  .diag-section .bg-canvas::before{
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(ellipse 900px 500px at 50% 0%, rgba(124,183,255,0.16), transparent 65%);
+    animation:diagBreathe 6s ease-in-out infinite;
+  }
+  @keyframes diagBreathe{ 0%,100%{ opacity:0.7; } 50%{ opacity:1; } }
+  .diag-card{
+    border:1px solid var(--line); border-radius:24px;
+    background:linear-gradient(160deg,var(--bg-2) 0%,var(--bg-1) 100%);
+    padding:64px; position:relative; overflow:hidden;
+  }
+  .diag-card::before{
+    content:""; position:absolute; top:-1px; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,var(--silver-2),transparent);
+    animation:slideLine 3s ease-in-out infinite;
+  }
+  @keyframes slideLine{ 0%,100%{ opacity:0.3; } 50%{ opacity:1; } }
+  .diag-grid{ display:grid; grid-template-columns:1fr 1.1fr; gap:64px; align-items:center; }
+  .diag-grid h2{ margin-bottom:24px; max-width:14ch; }
+  .diag-grid .lead{ margin-bottom:32px; }
+  .diag-points{ list-style:none; padding:0; margin:0; }
+  .diag-points li{
+    padding:22px 0; border-bottom:1px solid var(--line-soft);
+    display:grid; grid-template-columns:48px 1fr; gap:20px; align-items:center;
+    transform:translateX(-20px); opacity:0; transition:transform .6s, opacity .6s;
+  }
+  .diag-points.in li{ transform:translateX(0); opacity:1; }
+  .diag-points.in li:nth-child(1){ transition-delay:0.05s; }
+  .diag-points.in li:nth-child(2){ transition-delay:0.15s; }
+  .diag-points.in li:nth-child(3){ transition-delay:0.25s; }
+  .diag-points.in li:nth-child(4){ transition-delay:0.35s; }
+  .diag-points li:last-child{ border-bottom:none; }
+  .diag-points li .num{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.18em; color:var(--accent); padding-top:2px; }
+  .diag-points li .text{ font-size:16.5px; color:var(--silver-1); line-height:1.5; }
+
+  /* ===== FORM ===== */
+  .form-section{ padding:120px 0; }
+  .form-grid{ display:grid; grid-template-columns:1fr 1.2fr; gap:80px; align-items:start; }
+  .form-grid .left h2{ margin-bottom:24px; max-width:14ch; }
+  .form-grid .left .lead{ margin-bottom:40px; }
+  .contact-list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:14px; }
+  .contact-list li{
+    display:flex; align-items:center; gap:18px; padding:18px 22px;
+    border:1px solid var(--line-soft); border-radius:14px; background:var(--bg-1);
+    transition:transform .3s, border-color .3s, background .3s;
+  }
+  .contact-list li:hover{ transform:translateX(4px); border-color:var(--line); background:var(--bg-2); }
+  .contact-list .ico{ width:40px; height:40px; border-radius:10px; background:var(--bg-2); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; color:var(--accent); flex-shrink:0; transition:transform .4s; }
+  .contact-list li:hover .ico{ transform:rotate(8deg); }
+  .contact-list .k{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.24em; color:var(--silver-3); text-transform:uppercase; }
+  .contact-list .v{ font-size:15.5px; color:var(--silver-1); margin-top:4px; }
+
+  form.lead-form{ display:flex; flex-direction:column; gap:18px; }
+  .field{ display:flex; flex-direction:column; gap:8px; }
+  .field label{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.22em; color:var(--silver-3); text-transform:uppercase; }
+  .field input,.field textarea,.field select{
+    background:var(--bg-1); border:1px solid var(--line-soft); border-radius:10px;
+    padding:14px 16px; color:var(--silver-1); font:inherit; font-size:15px;
+    transition:border .25s, background .25s, box-shadow .25s; resize:vertical;
+  }
+  .field input:focus,.field textarea:focus,.field select:focus{
+    outline:none; border-color:var(--accent); background:var(--bg-2);
+    box-shadow:0 0 0 4px rgba(124,183,255,0.1);
+  }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .form-cta-row{ display:flex; gap:14px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+  .form-note{ font-size:12.5px; color:var(--silver-3); }
+
+  /* ===== FAQ ===== */
+  .faq{ display:flex; flex-direction:column; }
+  .faq-item{ border-bottom:1px solid var(--line-soft); padding:24px 0; }
+  .faq-item summary{
+    list-style:none; display:flex; justify-content:space-between; align-items:start; gap:24px;
+    font-size:18px; color:var(--silver-1); font-weight:500;
+  }
+  .faq-item summary::-webkit-details-marker{ display:none; }
+  .faq-item .icon-toggle{
+    width:28px; height:28px; border:1px solid var(--line); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    transition:transform .4s cubic-bezier(.2,.8,.3,1), border-color .3s, color .3s; color:var(--silver-2);
+  }
+  .faq-item[open] .icon-toggle{ transform:rotate(135deg); border-color:var(--accent); color:var(--accent); }
+  .faq-item .answer{ margin-top:18px; padding-right:52px; font-size:15.5px; line-height:1.65; color:var(--silver-2); max-width:72ch; }
+
+  /* ===== FOOTER ===== */
+  footer{ padding:80px 0 36px; border-top:1px solid var(--line-soft); background:#040A14; position:relative; overflow:hidden; }
+  footer::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    animation:slideLine 5s ease-in-out infinite;
+  }
+  .footer-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:64px; margin-bottom:64px; }
+  footer h4{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.28em; color:var(--silver-3); text-transform:uppercase; margin-bottom:22px; }
+  footer .links{ display:flex; flex-direction:column; gap:12px; }
+  footer .links a{ font-size:14.5px; color:var(--silver-2); transition:color .2s, padding-left .2s; }
+  footer .links a:hover{ color:var(--silver-1); padding-left:6px; }
+  footer .brand-block p{ font-size:14px; color:var(--silver-3); margin-top:18px; max-width:42ch; line-height:1.6; }
+  .footer-bottom{ display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap;
+    padding-top:28px; border-top:1px solid var(--line-soft);
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.18em; color:var(--silver-4); text-transform:uppercase; }
+
+  /* ===== FLOATING CTA ===== */
+  .float-cta{
+    position:fixed; bottom:28px; right:28px; z-index:60;
+    display:flex; align-items:center; gap:10px; padding:14px 20px;
+    background:#25D366; color:#06101F; border-radius:999px;
+    font-weight:600; font-size:14px;
+    box-shadow:0 10px 30px -8px rgba(37,211,102,0.5);
+    opacity:0; transform:translateY(20px) scale(0.95); transition:all .35s ease; pointer-events:none;
+  }
+  .float-cta.visible{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .float-cta:hover{ background:#1FB955; transform:translateY(-2px) scale(1.03); }
+  .float-cta::before{
+    content:""; position:absolute; inset:-3px; border-radius:999px;
+    border:2px solid rgba(37,211,102,0.5);
+    animation:ringPulse 2s ease-out infinite;
+  }
+  @keyframes ringPulse{ 0%{ opacity:1; transform:scale(1);} 100%{ opacity:0; transform:scale(1.4);} }
+
+  /* ===== reveal anim ===== */
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .9s cubic-bezier(.2,.65,.3,1), transform .9s cubic-bezier(.2,.65,.3,1); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  .reveal.delay-1{ transition-delay:0.08s; }
+  .reveal.delay-2{ transition-delay:0.16s; }
+  .reveal.delay-3{ transition-delay:0.24s; }
+
+  /* ===== scroll progress ===== */
+  .scroll-progress{
+    position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    width:0%; z-index:55; transition:width .1s linear; box-shadow:0 0 10px var(--accent);
+  }
+
+  /* ===== responsive ===== */
+  /* ===== mobile menu ===== */
+  .menu-toggle{
+    display:none; width:42px; height:42px; border-radius:10px;
+    border:1px solid var(--line); background:rgba(10,22,38,0.6); color:var(--silver-1);
+    align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .menu-toggle span{ width:18px; height:1.5px; background:currentColor; position:relative; transition:all .25s; display:block; }
+  .menu-toggle span::before, .menu-toggle span::after{
+    content:""; position:absolute; left:0; width:18px; height:1.5px; background:currentColor; transition:all .25s;
+  }
+  .menu-toggle span::before{ top:-6px; }
+  .menu-toggle span::after{ top:6px; }
+  body.menu-open .menu-toggle span{ background:transparent; }
+  body.menu-open .menu-toggle span::before{ top:0; transform:rotate(45deg); }
+  body.menu-open .menu-toggle span::after{ top:0; transform:rotate(-45deg); }
+
+  .mobile-nav{
+    position:fixed; inset:0; background:rgba(6,16,31,0.96); backdrop-filter:blur(20px);
+    z-index:45; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
+    padding:120px 32px 48px; gap:8px;
+    opacity:0; pointer-events:none; transform:translateY(-12px); transition:all .35s ease;
+  }
+  body.menu-open .mobile-nav{ opacity:1; pointer-events:auto; transform:translateY(0); }
+  .mobile-nav a{
+    font-size:30px; font-weight:400; letter-spacing:-0.02em; color:var(--silver-1);
+    padding:14px 0; width:100%; border-bottom:1px solid var(--line-soft);
+  }
+  .mobile-nav .btn-primary{ font-size:14px; margin-top:24px; padding:14px 24px; }
+
+  @media (max-width:960px){
+    nav.primary{ display:none; }
+    .header-right .lang-toggle{ display:none; }
+    .header-right .btn-primary{ display:none; }
+    .menu-toggle{ display:flex; }
+    .hero{ padding:120px 0 70px; }
+    .hero-tagline{ margin-top:40px; gap:10px; font-size:10px; letter-spacing:0.22em; }
+    .section{ padding:72px 0; }
+    .section-head{ grid-template-columns:1fr; gap:20px; margin-bottom:44px; }
+    .pillars{ grid-template-columns:1fr; }
+    .results{ grid-template-columns:1fr; }
+    .impact-grid{ grid-template-columns:1fr 1fr; }
+    .impact-cell{ border-right:1px solid var(--line-soft); padding:28px 22px; }
+    .impact-cell:nth-child(2n){ border-right:none; }
+    .impact-cell:nth-last-child(-n+3){ border-bottom:1px solid var(--line-soft); }
+    .impact-cell:last-child{ border-bottom:none; }
+    .perfil-grid{ grid-template-columns:1fr; gap:36px; }
+    .method{ grid-template-columns:1fr 1fr; }
+    .step:nth-child(2){ border-right:none; }
+    .step{ padding:28px 22px; }
+    .about-henrick{ grid-template-columns:1fr; gap:36px; }
+    .henrick-photo{ max-width:340px; aspect-ratio:1/1.1; margin:0 auto; }
+    .diag-grid{ grid-template-columns:1fr; gap:36px; }
+    .diag-card{ padding:36px 26px; }
+    .form-grid{ grid-template-columns:1fr; gap:44px; }
+    .footer-grid{ grid-template-columns:1fr; gap:32px; }
+    .principle{ grid-template-columns:1fr; gap:14px; padding:28px; }
+    .quote-block{ padding:28px; }
+    .quote-block p{ font-size:20px; line-height:1.45; }
+    .quote-block::before{ left:0; top:16px; bottom:16px; }
+    .result-card{ padding:32px 24px; }
+    .result-card .number{ font-size:74px; }
+    .result-card .number .pct{ font-size:32px; }
+    .henrick-bio .stats{ grid-template-columns:1fr 1fr; gap:20px; padding-top:24px; }
+    .henrick-bio .stats .v{ font-size:34px; }
+    .henrick-bio p{ font-size:16px; }
+    .wrap{ padding:0 22px; }
+    header.site .inner{ padding:14px 22px; gap:14px; }
+    h1{ font-size:clamp(36px,9vw,52px); }
+    h2{ font-size:clamp(28px,6vw,38px); }
+    .hero-sub{ font-size:16.5px; max-width:none; }
+    .lead{ font-size:16.5px; }
+    .float-cta{ bottom:18px; right:18px; padding:12px 16px; font-size:13px; }
+    .float-cta span{ display:none; }
+    .float-cta::before{ display:none; }
+    .orb.o1{ width:480px; height:480px; }
+    .orb.o2{ width:420px; height:420px; }
+    .orb.o3{ width:520px; height:520px; }
+    .orb.o4, .orb.o5{ width:380px; height:380px; }
+    .field-row{ grid-template-columns:1fr; }
+    .contact-list li{ padding:14px 16px; }
+    .footer-bottom{ font-size:10px; gap:14px; }
+  }
+  @media (max-width:560px){
+    .impact-grid{ grid-template-columns:1fr; }
+    .impact-cell{ border-right:none !important; }
+    .method{ grid-template-columns:1fr; }
+    .step{ border-right:none; }
+    .field-row{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body data-lang="pt">
+
+<div class="ambient-stage" id="ambient">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+  <div class="orb o4"></div>
+  <div class="orb o5"></div>
+</div>
+<div class="ambient-grain"></div>
+
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="scroll-progress" id="scrollBar"></div>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#proposta" data-i18n="nav-prop">Proposta</a>
+  <a href="#pilares" data-i18n="nav-pillars">O que fazemos</a>
+  <a href="#resultados" data-i18n="nav-results">Resultados</a>
+  <a href="#metodo" data-i18n="nav-method">Método</a>
+  <a href="#henrick" data-i18n="nav-henrick">Henrick</a>
+  <a href="#faq">FAQ</a>
+  <a class="btn btn-primary" href="#diagnostico">
+    <span data-i18n="cta-primary">Solicitar diagnóstico</span>
+    <svg class="arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7H11M11 7L7 3M11 7L7 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</div>
+
+<!-- ============== HEADER ============== -->
+<header class="site" id="header">
+  <div class="inner">
+    <a href="#top" class="brand">
+      <img src="assets/logo-axioma.jpg" alt="Axioma" />
+      <div class="brand-text">
+        <span class="n1">AXIOMA</span>
+        <span class="n2">SYSTEMS · AI</span>
+      </div>
+    </a>
+    <nav class="primary">
+      <a href="#proposta" data-i18n="nav-prop">Proposta</a>
+      <a href="#pilares" data-i18n="nav-pillars">O que fazemos</a>
+      <a href="#resultados" data-i18n="nav-results">Resultados</a>
+      <a href="#metodo" data-i18n="nav-method">Método</a>
+      <a href="#henrick" data-i18n="nav-henrick">Henrick</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="header-right">
+      <div class="lang-toggle">
+        <button class="active" data-lang-btn="pt">PT</button>
+        <button data-lang-btn="en">EN</button>
+      </div>
+      <a class="btn btn-primary" href="#diagnostico">
+        <span data-i18n="cta-primary">Solicitar diagnóstico</span>
+        <svg class="arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7H11M11 7L7 3M11 7L7 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section class="hero" id="top">
+  <div class="grid-bg"></div>
+  <div class="wrap">
+    <div class="hero-inner">
+      <span class="eyebrow" data-i18n="hero-eyebrow">Infraestrutura de Crescimento</span>
+      <h1 style="margin-top:24px;">
+        <span class="silver split-line" data-i18n="hero-h1a">Mais tempo,</span><br/>
+        <span class="silver split-line" data-i18n="hero-h1b">menos custo,</span><br/>
+        <span class="accent split-line" data-i18n="hero-h1c">operação no lugar.</span>
+      </h1>
+      <p class="hero-sub reveal delay-2" data-i18n="hero-sub">
+        Devolvemos horas de equipe, reduzimos despesa fixa e organizamos a produção — para a empresa crescer sem inflar folha, sem retrabalho e sem ruído operacional.
+      </p>
+      <div class="hero-cta-row reveal delay-3">
+        <a class="btn btn-primary" href="#diagnostico">
+          <span data-i18n="cta-primary">Solicitar diagnóstico</span>
+          <svg class="arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7H11M11 7L7 3M11 7L7 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#pilares"><span data-i18n="cta-secondary">Como funciona</span></a>
+      </div>
+      <div class="hero-tagline reveal delay-3">
+        <span class="pulse-dot"></span>
+        <span data-i18n="hero-tag">Tempo · Custo · Ordem operacional</span>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PROPOSTA / QUEM SOMOS ============== -->
+<section class="section" id="proposta">
+  <div class="bg-canvas"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow" data-i18n="prop-eye">01 · Quem somos</span>
+        <h2 style="margin-top:24px;" data-i18n="prop-h2">Tempo, custo e ordem operacional — desenhados na sua operação.</h2>
+      </div>
+      <div>
+        <p class="lead" data-i18n="prop-p1">
+          A Axioma trabalha onde a empresa perde dinheiro sem perceber: nas horas consumidas em tarefas repetitivas, no retrabalho silencioso, na operação desorganizada que custa caro todo mês. Estruturamos a infraestrutura de cresimento usando IA aplicada — mas o que entregamos é tempo de equipe, redução de despesa fixa e ordem dentro da casa.
+        </p>
+      </div>
+    </div>
+    <div class="quote-block reveal">
+      <p data-i18n="prop-quote">Não vendemos IA. Vendemos horas de equipe devolvidas, despesa fixa cortada e a operação no lugar certo — sem inflar folha, sem ruído e sem perda de qualidade.</p>
+      <div class="who" data-i18n="prop-quote-who">— Princípio Axioma</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PILARES ============== -->
+<section class="section" id="pilares">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow" data-i18n="pillars-eye">02 · O que fazemos</span>
+        <h2 style="margin-top:24px;" data-i18n="pillars-h2">Três frentes que devolvem horas à sua operação.</h2>
+      </div>
+      <div>
+        <p class="lead" data-i18n="pillars-p">
+          Cada camada existe para um único fim: cortar tempo desperdiçado, reduzir custo recorrente e organizar o que hoje custa caro de manter.
+        </p>
+      </div>
+    </div>
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="num">
+          <span>01 / 03</span>
+          <span class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="5" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="19" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="5" cy="19" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="19" cy="19" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 6.5L10 10M17.5 6.5L14 10M6.5 17.5L10 14M17.5 17.5L14 14" stroke="currentColor" stroke-width="1.2"/></svg></span>
+        </div>
+        <h3 data-i18n="pillar1-h">Tempo de equipe devolvido</h3>
+        <p data-i18n="pillar1-p">Agentes desenhados para a sua operação assumem etapas repetitivas — horas que voltam para o que realmente gera receita.</p>
+      </div>
+      <div class="pillar reveal delay-1">
+        <div class="num">
+          <span>02 / 03</span>
+          <span class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h6M4 12h10M4 17h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="17" cy="7" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="14" cy="17" r="2" stroke="currentColor" stroke-width="1.5"/></svg></span>
+        </div>
+        <h3 data-i18n="pillar2-h">Custo recorrente menor</h3>
+        <p data-i18n="pillar2-p">Fluxos arquitetados para que a empresa entregue mais sem inflar folha — a despesa fixa para de subir junto com o volume.</p>
+      </div>
+      <div class="pillar reveal delay-2">
+        <div class="num">
+          <span>03 / 03</span>
+          <span class="badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 9h18" stroke="currentColor" stroke-width="1.5"/><path d="M7 13h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="6" cy="6.5" r="0.5" fill="currentColor"/><circle cx="8" cy="6.5" r="0.5" fill="currentColor"/></svg></span>
+        </div>
+        <h3 data-i18n="pillar3-h">Operação no lugar</h3>
+        <p data-i18n="pillar3-p">Padrão, previsibilidade e controle dentro da casa — menos retrabalho, menos dependência de quem está “na correria”.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== RESULTADOS ============== -->
+<section class="section" id="resultados">
+  <div class="bg-canvas"><div class="bars"><span></span><span></span><span></span><span></span><span></span></div></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow" data-i18n="res-eye">03 · Resultados observados</span>
+        <h2 style="margin-top:24px;" data-i18n="res-h2">Tempo, custo e capacidade — medidos em operações reais.</h2>
+      </div>
+      <div>
+        <p class="lead" data-i18n="res-p">
+          Casos em verticais distintas, todos com o mesmo princípio: ganho mensurável em horas, despesa ou volume entregue.
+        </p>
+      </div>
+    </div>
+    <div class="results">
+      <div class="result-card reveal">
+        <div class="case" data-i18n="res-c1-case">Caso 01 · Direito</div>
+        <div class="label" data-i18n="res-c1-label">Redução de tempo</div>
+        <div class="number"><span data-counter data-target="80">0</span><span class="pct">%</span></div>
+        <h3 data-i18n="res-c1-h">Escritório de advocacia.</h3>
+        <p data-i18n="res-c1-p">Tempo de produção de peças jurídicas reduzido de 2–4 horas para 20–30 minutos. A equipe deixou de ser gargalo e o escritório passou a aceitar mais casos sem contratar.</p>
+      </div>
+      <div class="result-card reveal delay-1">
+        <div class="case" data-i18n="res-c2-case">Caso 02 · Marketing</div>
+        <div class="label" data-i18n="res-c2-label">Aumento de capacidade</div>
+        <div class="number"><span data-counter data-target="100">0</span><span class="pct">%</span></div>
+        <h3 data-i18n="res-c2-h">Agência de marketing.</h3>
+        <p data-i18n="res-c2-p">Produção de vídeo dobrou — de 1 a cada 2 horas para 1 por hora. Mesmo time, mesma qualidade, o dobro de entrega para clientes.</p>
+      </div>
+      <div class="result-card reveal">
+        <div class="case" data-i18n="res-c3-case">Caso 03 · Saúde</div>
+        <div class="label" data-i18n="res-c3-label">Redução de despesa</div>
+        <div class="number"><span data-counter data-target="42">0</span><span class="pct">%</span></div>
+        <h3 data-i18n="res-c3-h">Clínica multidisciplinar.</h3>
+        <p data-i18n="res-c3-p">Recepção, agendamento e pós-consulta reorganizados. Despesa fixa caiu 42% e não-comparecimento reduziu de 22% para 6%.</p>
+      </div>
+      <div class="result-card reveal delay-1">
+        <div class="case" data-i18n="res-c4-case">Caso 04 · Contábil</div>
+        <div class="label" data-i18n="res-c4-label">Tempo recuperado</div>
+        <div class="number"><span data-counter data-target="65">0</span><span class="pct">%</span></div>
+        <h3 data-i18n="res-c4-h">Escritório contábil.</h3>
+        <p data-i18n="res-c4-p">Triagem fiscal e classificação de documentos automatizadas. 65% das horas operacionais voltaram para revisão técnica e atendimento a clientes maiores.</p>
+      </div>
+      <div class="result-card reveal">
+        <div class="case" data-i18n="res-c5-case">Caso 05 · E-commerce</div>
+        <div class="label" data-i18n="res-c5-label">Atendimento resolvido</div>
+        <div class="number"><span data-counter data-target="3">0</span><span class="pct">×</span></div>
+        <h3 data-i18n="res-c5-h">Loja online.</h3>
+        <p data-i18n="res-c5-p">Capacidade de atendimento triplicou com o mesmo time. Tempo médio de resposta caiu de 3h para 12 min e taxa de retorno de cliente subiu 28%.</p>
+      </div>
+      <div class="result-card reveal delay-1">
+        <div class="case" data-i18n="res-c6-case">Caso 06 · Imobiliário</div>
+        <div class="label" data-i18n="res-c6-label">Folha estabilizada</div>
+        <div class="number"><span data-counter data-target="50">0</span><span class="pct">%</span></div>
+        <h3 data-i18n="res-c6-h">Imobiliária de alto padrão.</h3>
+        <p data-i18n="res-c6-p">Volume de leads qualificados cresceu 50% sem nenhuma contratação nova. Corretores passaram a tratar somente casos já maduros.</p>
+      </div>
+    </div>
+    <div class="principle reveal">
+      <h4 data-i18n="res-prin-h">O princípio em ação</h4>
+      <p data-i18n="res-prin-p">O ganho não veio de uma ferramenta de IA solta. Veio de olhar onde a operação estava perdendo tempo, dinheiro e ordem — e desenhar a estrutura certa para que aquilo deixasse de custar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== IMPACTO ============== -->
+<section class="section" id="impacto">
+  <div class="bg-canvas">
+    <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+      <g fill="none" stroke="#1E3553" stroke-width="1">
+        <circle cx="600" cy="300" r="80"><animate attributeName="r" values="80;380;80" dur="8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.6;0;0.6" dur="8s" repeatCount="indefinite"/></circle>
+        <circle cx="600" cy="300" r="160"><animate attributeName="r" values="160;460;160" dur="8s" begin="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0;0.5" dur="8s" begin="2s" repeatCount="indefinite"/></circle>
+        <circle cx="600" cy="300" r="240"><animate attributeName="r" values="240;540;240" dur="8s" begin="4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.4;0;0.4" dur="8s" begin="4s" repeatCount="indefinite"/></circle>
+      </g>
+    </svg>
+  </div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow" data-i18n="imp-eye">04 · Onde isso impacta</span>
+        <h2 style="margin-top:24px;" data-i18n="imp-h2">Impacto direto na operação da empresa.</h2>
+      </div>
+      <div>
+        <p class="lead" data-i18n="imp-p">
+          A estruturação de IA reorganiza pontos críticos da empresa, traduzindo-se em ganho mensurável em múltiplas frentes simultaneamente.
+        </p>
+      </div>
+    </div>
+    <div class="impact-grid reveal">
+      <div class="impact-cell">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 17l6-6 4 4 8-8M14 7h7v7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h4 data-i18n="imp-1h">Redução de custo operacional</h4>
+        <p data-i18n="imp-1p">Diminuição de despesa fixa com tarefas que passam a ser executadas com apoio estruturado de IA.</p>
+      </div>
+      <div class="impact-cell">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 12h18M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <h4 data-i18n="imp-2h">Expansão de capacidade</h4>
+        <p data-i18n="imp-2p">Volume de produção maior sem aumento proporcional de equipe ou carga sobre profissionais existentes.</p>
+      </div>
+      <div class="impact-cell">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="3" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="11" width="14" height="3" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="17" width="18" height="3" stroke="currentColor" stroke-width="1.5"/></svg></div>
+        <h4 data-i18n="imp-3h">Padronização de processos</h4>
+        <p data-i18n="imp-3p">Output uniforme dentro do padrão técnico, reduzindo retrabalho e variação de qualidade.</p>
+      </div>
+      <div class="impact-cell">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div>
+        <h4 data-i18n="imp-4h">Controle operacional</h4>
+        <p data-i18n="imp-4p">Mais visibilidade sobre fluxos internos, gargalos e pontos de ineficiência da operação.</p>
+      </div>
+      <div class="impact-cell">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 4l3 3 4-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h4 data-i18n="imp-5h">Liberação de equipe</h4>
+        <p data-i18n="imp-5p">Profissionais saem de tarefas repetitivas e passam a operar em camadas de maior valor.</p>
+      </div>
+      <div class="impact-cell">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 20V10M9 20V4M15 20v-7M21 20V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <h4 data-i18n="imp-6h">Capacidade de escala</h4>
+        <p data-i18n="imp-6p">Estrutura desenhada para crescer com a empresa, sem retrabalho de arquitetura conforme o volume aumenta.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PARA QUEM É ============== -->
+<section class="section" id="perfil">
+  <div class="wrap">
+    <div class="perfil-grid reveal">
+      <div>
+        <span class="eyebrow" data-i18n="per-eye">05 · Para quem é</span>
+        <h2 style="margin-top:24px;" data-i18n="per-h2">Perfil de empresa atendida.</h2>
+        <p class="lead" style="margin-top:28px;" data-i18n="per-p">
+          A Axioma atua em empresas com operação ativa, onde parte significativa do tempo da equipe é consumida em tarefas estruturáveis com IA.
+        </p>
+      </div>
+      <ul class="perfil-list">
+        <li><span class="n">01</span><span data-i18n="per-1">Produção repetitiva de alto volume — peças, conteúdo, documentos, atendimento.</span></li>
+        <li><span class="n">02</span><span data-i18n="per-2">Operações que dependem de múltiplos sistemas com integração frágil.</span></li>
+        <li><span class="n">03</span><span data-i18n="per-3">Custo operacional fixo elevado em relação ao output entregue.</span></li>
+        <li><span class="n">04</span><span data-i18n="per-4">Empresas que querem escalar sem aumentar proporcionalmente folha ou estrutura.</span></li>
+        <li><span class="n">05</span><span data-i18n="per-5">Organizações com desorganização interna ou retrabalho frequente.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============== MÉTODO ============== -->
+<section class="section" id="metodo">
+  <div class="bg-canvas">
+    <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 1200 200">
+      <defs>
+        <linearGradient id="pathGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#7CB7FF" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#7CB7FF" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#7CB7FF" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="M 0 100 Q 300 30 600 100 T 1200 100" fill="none" stroke="#1E3553" stroke-width="1" stroke-dasharray="4 6"/>
+      <circle r="6" fill="#7CB7FF" filter="drop-shadow(0 0 8px #7CB7FF)">
+        <animateMotion dur="6s" repeatCount="indefinite" path="M 0 100 Q 300 30 600 100 T 1200 100"/>
+      </circle>
+    </svg>
+  </div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow" data-i18n="met-eye">06 · Como funciona</span>
+        <h2 style="margin-top:24px;" data-i18n="met-h2">Método de implementação.</h2>
+      </div>
+      <div>
+        <p class="lead" data-i18n="met-p">
+          Antes de qualquer aplicação de IA, entendemos a realidade da operação. Implementação só vem depois do diagnóstico.
+        </p>
+      </div>
+    </div>
+    <div class="method reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4 data-i18n="met-1h">Diagnóstico da operação</h4>
+        <p data-i18n="met-1p">Compreensão do funcionamento atual, fluxos críticos e dependências internas.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4 data-i18n="met-2h">Mapeamento de gargalos</h4>
+        <p data-i18n="met-2p">Pontos de maior desperdício de tempo, dependência manual ou ineficiência sistêmica.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4 data-i18n="met-3h">Desenho da solução</h4>
+        <p data-i18n="met-3p">Arquitetura específica: agentes especializados, automações e estrutura de fluxos.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4 data-i18n="met-4h">Implementação e acompanhamento</h4>
+        <p data-i18n="met-4p">Aplicação na operação real, com revisão humana mantida no controle.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== CLIENTS ============== -->
+<section class="clients-section" id="clientes">
+  <div class="wrap">
+    <div class="clients-row reveal">
+      <span class="eyebrow" data-i18n="cli-eye">Empresas atendidas</span>
+      <div class="clients-grid">
+        <div class="client-logo"><svg viewBox="0 0 200 50"><g fill="currentColor"><path d="M10 12 L18 35 L26 12 H32 L20 40 H16 L4 12 Z"/><text x="38" y="30" font-family="Georgia, serif" font-size="15" letter-spacing="2" font-weight="600">VIANNA &amp; BOAVENTURA</text><text x="38" y="42" font-family="Georgia, serif" font-size="7" letter-spacing="4" opacity="0.7">A D V O C A C I A</text></g></svg></div>
+        <div class="client-logo"><svg viewBox="0 0 200 50"><g fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="18" cy="25" r="10"/><path d="M11 25 H25 M18 18 V32"/></g><g fill="currentColor"><text x="40" y="25" font-family="Inter, sans-serif" font-size="19" font-weight="500">CLÍNICA ATHENA</text><text x="40" y="40" font-family="JetBrains Mono, monospace" font-size="7" letter-spacing="3" opacity="0.7">SAÚDE INTEGRATIVA</text></g></svg></div>
+        <div class="client-logo"><svg viewBox="0 0 200 50"><g fill="currentColor"><polygon points="15,10 22,25 15,40 8,25"/><text x="32" y="32" font-family="Inter, sans-serif" font-size="22" font-weight="300" letter-spacing="3">NORTE</text><text x="108" y="32" font-family="Inter, sans-serif" font-size="22" font-weight="600" letter-spacing="3">STUDIO</text></g></svg></div>
+        <div class="client-logo"><svg viewBox="0 0 200 50"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 12 Q18 25 8 38 M28 12 Q18 25 28 38"/></g><g fill="currentColor"><text x="42" y="26" font-family="Inter, sans-serif" font-size="20" font-weight="600">helix</text><text x="42" y="40" font-family="JetBrains Mono, monospace" font-size="7" letter-spacing="3.5" opacity="0.7">C O N T Á B I L</text></g></svg></div>
+        <div class="client-logo"><svg viewBox="0 0 200 50"><g fill="currentColor"><path d="M10 38 V20 L22 12 L34 20 V38 H26 V28 H18 V38 Z"/><text x="44" y="26" font-family="Georgia, serif" font-size="19" font-weight="500" letter-spacing="3">CORTEZA</text><text x="44" y="40" font-family="JetBrains Mono, monospace" font-size="7" letter-spacing="4" opacity="0.7">I M Ó V E I S</text></g></svg></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== HENRICK ============== -->
+<section class="section" id="henrick">
+  <div class="wrap">
+    <div class="about-henrick reveal">
+      <div class="henrick-photo">
+        <div class="scan"></div>
+        <div class="tag">
+          <span class="name">Henrick Nantes</span>
+          <span class="role" data-i18n="hen-role">Arquiteto · Infraestrutura<br/>de Crescimento com IA</span>
+        </div>
+      </div>
+      <div class="henrick-bio">
+        <span class="eyebrow" data-i18n="hen-eye">07 · Quem conduz</span>
+        <h2 style="margin-top:24px;" data-i18n="hen-h2">Quatro anos estudando IA. Foco em fazer a teoria virar resultado.</h2>
+        <p data-i18n="hen-p1">Henrick Nantes é o arquiteto por trás da metodologia Axioma. Há quatro anos imerso no estudo de IA aplicada, traduz a tecnologia em ganho operacional concreto — não em demonstração isolada.</p>
+        <p data-i18n="hen-p2">A motivação é direta: resolver problemas reais da operação e ver as soluções produzirem resultado mensurável. É essa lógica que orienta cada projeto.</p>
+        <div class="stats">
+          <div><div class="v">04+</div><div class="k" data-i18n="hen-s1">Anos estudando IA aplicada</div></div>
+          <div><div class="v">~80<span style="font-size:24px;opacity:0.6">%</span></div><div class="k" data-i18n="hen-s2">Redução de tempo (Direito)</div></div>
+          <div><div class="v">2×</div><div class="k" data-i18n="hen-s3">Capacidade de produção (Marketing)</div></div>
+        </div>
+        <div class="stats" style="margin-top:20px;padding-top:0;border-top:none;">
+          <div><div class="v">42<span style="font-size:24px;opacity:0.6">%</span></div><div class="k" data-i18n="hen-s4">Despesa fixa cortada (Clínica)</div></div>
+          <div><div class="v">3×</div><div class="k" data-i18n="hen-s5">Atendimento resolvido (E-commerce)</div></div>
+          <div><div class="v">65<span style="font-size:24px;opacity:0.6">%</span></div><div class="k" data-i18n="hen-s6">Horas recuperadas (Contábil)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== DIAGNÓSTICO ============== -->
+<section class="diag-section" id="diagnostico">
+  <div class="bg-canvas"></div>
+  <div class="wrap">
+    <div class="diag-card reveal">
+      <div class="diag-grid">
+        <div>
+          <span class="eyebrow" data-i18n="diag-eye">08 · Por onde começamos</span>
+          <h2 style="margin-top:24px;" data-i18n="diag-h2">Diagnóstico Operacional Inicial.</h2>
+          <p class="lead" data-i18n="diag-p">
+            Conversa objetiva e estruturada para entender a operação atual da empresa, identificar pontos de ineficiência e avaliar onde há espaço real para ganho — antes de qualquer proposta de implementação.
+          </p>
+          <div class="hero-cta-row">
+            <a class="btn btn-primary" href="https://wa.me/5531998597731?text=Ol%C3%A1%20Henrick%2C%20gostaria%20de%20agendar%20o%20Diagn%C3%B3stico%20Operacional%20Inicial%20da%20Axioma." target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.9-.4-1.7-.9-2.4-1.6-.6-.6-1.1-1.3-1.5-2-.3-.5 0-.4.4-.9.1-.1.3-.3.4-.5.1-.2.1-.3 0-.5 0-.1-.6-1.5-.9-2.1-.2-.5-.4-.5-.6-.5h-.6c-.2 0-.5.1-.8.3-.9.9-1.2 2-.9 3.2.5 1.4 1.3 2.7 2.4 3.7 1.5 1.5 3.4 2.6 5.5 3.1.3.1.6.1.9.1.5.1 1 .1 1.5 0 .6-.1 1.7-.7 1.9-1.3.2-.4.2-.8.1-1.2-.1-.1-.3-.2-.6-.3M12 21.4c-1.6 0-3.1-.4-4.5-1.2l-.3-.2-3.3.9.9-3.2-.2-.3c-2.4-3.9-1.2-9.1 2.7-11.6 3.9-2.5 9-1.3 11.5 2.6 2.4 3.9 1.3 9-2.6 11.5-1.4.8-2.9 1.3-4.4 1.3M19.1 4.9C15.2 1 8.9 1 5 4.9c-3.2 3.2-3.9 8.2-1.5 12.1L2 22.6l5.8-1.5c1.3.7 2.7 1 4.2 1 5.5 0 9.9-4.4 9.9-9.9 0-2.6-1-5.1-2.8-6.9z"/></svg>
+              <span data-i18n="diag-cta">Agendar pelo WhatsApp</span>
+              <svg class="arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7H11M11 7L7 3M11 7L7 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="btn btn-ghost" href="#contato" data-i18n="diag-cta2">Ou preencher formulário</a>
+          </div>
+        </div>
+        <ul class="diag-points">
+          <li><span class="num">01</span><span class="text" data-i18n="diag-1">Mapeamento dos fluxos críticos da operação atual.</span></li>
+          <li><span class="num">02</span><span class="text" data-i18n="diag-2">Identificação de gargalos e oportunidades de estruturação.</span></li>
+          <li><span class="num">03</span><span class="text" data-i18n="diag-3">Indicação clara dos próximos passos viáveis.</span></li>
+          <li><span class="num">04</span><span class="text" data-i18n="diag-4">Conversa sem compromisso, conduzida diretamente por Henrick.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FORM ============== -->
+<section class="form-section" id="contato">
+  <div class="wrap">
+    <div class="form-grid reveal">
+      <div class="left">
+        <span class="eyebrow" data-i18n="form-eye">09 · Contato direto</span>
+        <h2 style="margin-top:24px;" data-i18n="form-h2">Prefere conversar por outro canal?</h2>
+        <p class="lead" data-i18n="form-p">
+          Use o formulário ao lado e retornaremos em até 24 horas úteis. Ou fale direto pelos canais abaixo.
+        </p>
+        <ul class="contact-list" style="margin-top:36px;">
+          <li>
+            <span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.9-.4-1.7-.9-2.4-1.6-.6-.6-1.1-1.3-1.5-2-.3-.5 0-.4.4-.9.1-.1.3-.3.4-.5.1-.2.1-.3 0-.5 0-.1-.6-1.5-.9-2.1-.2-.5-.4-.5-.6-.5h-.6c-.2 0-.5.1-.8.3-.9.9-1.2 2-.9 3.2.5 1.4 1.3 2.7 2.4 3.7 1.5 1.5 3.4 2.6 5.5 3.1.3.1.6.1.9.1.5.1 1 .1 1.5 0 .6-.1 1.7-.7 1.9-1.3.2-.4.2-.8.1-1.2-.1-.1-.3-.2-.6-.3M12 21.4c-1.6 0-3.1-.4-4.5-1.2l-.3-.2-3.3.9.9-3.2-.2-.3c-2.4-3.9-1.2-9.1 2.7-11.6 3.9-2.5 9-1.3 11.5 2.6 2.4 3.9 1.3 9-2.6 11.5-1.4.8-2.9 1.3-4.4 1.3M19.1 4.9C15.2 1 8.9 1 5 4.9c-3.2 3.2-3.9 8.2-1.5 12.1L2 22.6l5.8-1.5c1.3.7 2.7 1 4.2 1 5.5 0 9.9-4.4 9.9-9.9 0-2.6-1-5.1-2.8-6.9z"/></svg></span>
+            <a href="https://wa.me/5531998597731" target="_blank" rel="noopener">
+              <span class="k">WhatsApp</span>
+              <div class="v">+55 31 99859-7731</div>
+            </a>
+          </li>
+          <li>
+            <span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor"/></svg></span>
+            <a href="https://instagram.com/hsalomao_" target="_blank" rel="noopener">
+              <span class="k">Instagram</span>
+              <div class="v">@hsalomao_</div>
+            </a>
+          </li>
+          <li>
+            <span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg></span>
+            <div>
+              <span class="k" data-i18n="form-loc-k">Atendimento</span>
+              <div class="v" data-i18n="form-loc-v">Remoto · Brasil e LATAM</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <form class="lead-form" id="leadForm" novalidate>
+        <div class="field-row">
+          <div class="field"><label data-i18n="form-name">Nome</label><input type="text" name="name" required placeholder="Seu nome completo" /></div>
+          <div class="field"><label data-i18n="form-company">Empresa</label><input type="text" name="company" placeholder="Nome da empresa" /></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label data-i18n="form-email">Email</label><input type="email" name="email" required placeholder="contato@empresa.com" /></div>
+          <div class="field"><label data-i18n="form-phone">Telefone / WhatsApp</label><input type="tel" name="phone" placeholder="+55 (00) 00000-0000" /></div>
+        </div>
+        <div class="field">
+          <label data-i18n="form-segment">Segmento da empresa</label>
+          <select name="segment">
+            <option value="">— Selecione —</option>
+            <option>Direito / Jurídico</option>
+            <option>Marketing / Agência</option>
+            <option>Tecnologia / SaaS</option>
+            <option>Indústria / Produção</option>
+            <option>Saúde</option>
+            <option>Financeiro</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label data-i18n="form-msg">Conte rapidamente sobre a operação</label>
+          <textarea name="message" rows="4" placeholder="Onde a equipe gasta mais tempo hoje? Quais tarefas se repetem?"></textarea>
+        </div>
+        <div class="form-cta-row">
+          <button type="submit" class="btn btn-primary">
+            <span data-i18n="form-submit">Solicitar diagnóstico</span>
+            <svg class="arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7H11M11 7L7 3M11 7L7 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="form-note" data-i18n="form-note">Resposta em até 24h úteis. Sem custo nesta etapa.</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FAQ ============== -->
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow" data-i18n="faq-eye">10 · Dúvidas frequentes</span>
+        <h2 style="margin-top:24px;" data-i18n="faq-h2">Perguntas comuns antes do diagnóstico.</h2>
+      </div>
+      <div>
+        <p class="lead" data-i18n="faq-p">
+          Pontos que normalmente aparecem na primeira conversa. Se a sua dúvida não estiver aqui, fale com o Henrick pelo WhatsApp.
+        </p>
+      </div>
+    </div>
+    <div class="faq reveal">
+      <details class="faq-item">
+        <summary>
+          <span data-i18n="faq-1q">Vocês trabalham com prompts prontos ou ferramentas de prateleira?</span>
+          <span class="icon-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+        </summary>
+        <div class="answer" data-i18n="faq-1a">Não. Desenhamos a infraestrutura operacional com IA aplicada à realidade da empresa — agentes segmentados, automações de fluxo e implementação direta no ambiente.</div>
+      </details>
+      <details class="faq-item">
+        <summary>
+          <span data-i18n="faq-2q">A IA substitui a equipe ou faz revisão automaticamente?</span>
+          <span class="icon-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+        </summary>
+        <div class="answer" data-i18n="faq-2a">Não. A revisão humana é mantida no controle do output final. A IA acelera etapas repetitivas e padroniza fluxos — a equipe passa a operar em camadas de maior valor.</div>
+      </details>
+      <details class="faq-item">
+        <summary>
+          <span data-i18n="faq-3q">Quanto tempo dura uma implementação típica?</span>
+          <span class="icon-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+        </summary>
+        <div class="answer" data-i18n="faq-3a">Depende do escopo identificado no diagnóstico. O próprio diagnóstico já indica os próximos passos com prazo realista.</div>
+      </details>
+      <details class="faq-item">
+        <summary>
+          <span data-i18n="faq-4q">Funciona para empresas pequenas ou só para operações grandes?</span>
+          <span class="icon-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+        </summary>
+        <div class="answer" data-i18n="faq-4a">O critério é a presença de tarefas estruturáveis com IA. Tanto operações enxutas quanto estruturas maiores se enquadram, desde que haja volume operacional consistente.</div>
+      </details>
+      <details class="faq-item">
+        <summary>
+          <span data-i18n="faq-5q">O Diagnóstico Operacional Inicial tem custo?</span>
+          <span class="icon-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+        </summary>
+        <div class="answer" data-i18n="faq-5a">Não. Sem custo nesta etapa, sem compromisso de contratação.</div>
+      </details>
+      <details class="faq-item">
+        <summary>
+          <span data-i18n="faq-6q">Os dados da empresa ficam seguros durante o processo?</span>
+          <span class="icon-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+        </summary>
+        <div class="answer" data-i18n="faq-6a">A arquitetura respeita o padrão técnico e as políticas internas da empresa. Confidencialidade e segurança dos fluxos são tratadas formalmente antes de qualquer aplicação prática.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="brand-block">
+        <a href="#top" class="brand">
+          <img src="assets/logo-axioma.jpg" alt="Axioma" />
+          <div class="brand-text"><span class="n1">AXIOMA</span><span class="n2">SYSTEMS · AI</span></div>
+        </a>
+        <p data-i18n="foot-tag">Infraestrutura de Crescimento com IA. Estruturação de operações com IA aplicada a produtividade, padronização e eficiência.</p>
+      </div>
+      <div>
+        <h4 data-i18n="foot-nav">Navegação</h4>
+        <div class="links">
+          <a href="#proposta" data-i18n="nav-prop">Proposta</a>
+          <a href="#pilares" data-i18n="nav-pillars">O que fazemos</a>
+          <a href="#resultados" data-i18n="nav-results">Resultados</a>
+          <a href="#metodo" data-i18n="nav-method">Método</a>
+          <a href="#henrick" data-i18n="nav-henrick">Henrick</a>
+        </div>
+      </div>
+      <div>
+        <h4 data-i18n="foot-cont">Contato</h4>
+        <div class="links">
+          <a href="https://wa.me/5531998597731" target="_blank" rel="noopener">WhatsApp · +55 31 99859-7731</a>
+          <a href="https://instagram.com/hsalomao_" target="_blank" rel="noopener">Instagram · @hsalomao_</a>
+          <a href="#diagnostico" data-i18n="cta-primary">Solicitar diagnóstico</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Axioma Systems AI</span>
+      <span data-i18n="foot-edition">Edição · Abril 2026</span>
+    </div>
+  </div>
+</footer>
+
+<a class="float-cta" id="floatCta" href="https://wa.me/5531998597731?text=Ol%C3%A1%20Henrick%2C%20vim%20pelo%20site%20da%20Axioma%20e%20gostaria%20de%20agendar%20o%20Diagn%C3%B3stico%20Operacional%20Inicial." target="_blank" rel="noopener">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.9-.4-1.7-.9-2.4-1.6-.6-.6-1.1-1.3-1.5-2-.3-.5 0-.4.4-.9.1-.1.3-.3.4-.5.1-.2.1-.3 0-.5 0-.1-.6-1.5-.9-2.1-.2-.5-.4-.5-.6-.5h-.6c-.2 0-.5.1-.8.3-.9.9-1.2 2-.9 3.2.5 1.4 1.3 2.7 2.4 3.7 1.5 1.5 3.4 2.6 5.5 3.1.3.1.6.1.9.1.5.1 1 .1 1.5 0 .6-.1 1.7-.7 1.9-1.3.2-.4.2-.8.1-1.2-.1-.1-.3-.2-.6-.3M12 21.4c-1.6 0-3.1-.4-4.5-1.2l-.3-.2-3.3.9.9-3.2-.2-.3c-2.4-3.9-1.2-9.1 2.7-11.6 3.9-2.5 9-1.3 11.5 2.6 2.4 3.9 1.3 9-2.6 11.5-1.4.8-2.9 1.3-4.4 1.3M19.1 4.9C15.2 1 8.9 1 5 4.9c-3.2 3.2-3.9 8.2-1.5 12.1L2 22.6l5.8-1.5c1.3.7 2.7 1 4.2 1 5.5 0 9.9-4.4 9.9-9.9 0-2.6-1-5.1-2.8-6.9z"/></svg>
+  <span data-i18n="float-cta">Agendar reunião</span>
+</a>
+
+<script>
+  // ===== custom cursor =====
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  let mx=window.innerWidth/2, my=window.innerHeight/2, rx=mx, ry=my;
+  window.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`; });
+  function loop(){
+    rx += (mx-rx)*0.18; ry += (my-ry)*0.18;
+    ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;
+    requestAnimationFrame(loop);
+  }
+  loop();
+  document.querySelectorAll('a, button, summary, input, textarea, select, .btn').forEach(el=>{
+    el.addEventListener('mouseenter', ()=>document.body.classList.add('hover-link'));
+    el.addEventListener('mouseleave', ()=>document.body.classList.remove('hover-link'));
+  });
+
+  // ===== header scroll + progress =====
+  const header = document.getElementById('header');
+  const bar = document.getElementById('scrollBar');
+  const fc = document.getElementById('floatCta');
+  function onScroll(){
+    const y = window.scrollY;
+    header.classList.toggle('scrolled', y > 30);
+    fc.classList.toggle('visible', y > 600);
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (Math.min(y/h,1)*100) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+
+  // ===== reveal on scroll =====
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }});
+  }, { threshold:0.12 });
+  document.querySelectorAll('.reveal, .diag-points').forEach(el=>io.observe(el));
+
+  // ===== animated counters =====
+  const counterIo = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseFloat(el.dataset.target);
+      const dur = 1800; const start = performance.now();
+      const tick = now =>{
+        const t = Math.min((now-start)/dur, 1);
+        const eased = 1 - Math.pow(1-t,3);
+        el.textContent = Math.round(eased*target);
+        if(t<1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      counterIo.unobserve(el);
+    });
+  }, { threshold:0.6 });
+  document.querySelectorAll('[data-counter]').forEach(el=>counterIo.observe(el));
+
+  // ===== hero h1: split into letters and animate =====
+  function splitLines(){
+    document.querySelectorAll('.split-line').forEach((line, idx)=>{
+      const text = line.textContent;
+      line.classList.add('split-word');
+      line.innerHTML = '';
+      const inner = document.createElement('span');
+      inner.style.animationDelay = (idx * 0.12) + 's';
+      inner.textContent = text;
+      line.appendChild(inner);
+    });
+  }
+  splitLines();
+
+  // ===== form: send to WhatsApp =====
+  document.getElementById('leadForm').addEventListener('submit', ev=>{
+    ev.preventDefault();
+    const fd = new FormData(ev.currentTarget);
+    const lines = [
+      'Olá Henrick, vim pelo site da Axioma:',
+      '',
+      `*Nome:* ${fd.get('name')||'-'}`,
+      `*Empresa:* ${fd.get('company')||'-'}`,
+      `*Email:* ${fd.get('email')||'-'}`,
+      `*Telefone:* ${fd.get('phone')||'-'}`,
+      `*Segmento:* ${fd.get('segment')||'-'}`,
+      '',
+      `*Operação:*`,
+      `${fd.get('message')||'-'}`,
+      '',
+      'Gostaria de agendar o Diagnóstico Operacional Inicial.'
+    ].join('\n');
+    window.open('https://wa.me/5531998597731?text='+encodeURIComponent(lines), '_blank', 'noopener');
+  });
+
+  // ===== ambient orbs: scroll + mouse parallax =====
+  const orbs = document.querySelectorAll('.ambient-stage .orb');
+  const orbConfig = [
+    { ys: -0.18, mx: -22, my: -16 },
+    { ys: -0.32, mx: 28, my: -12 },
+    { ys: -0.12, mx: -14, my: 22 },
+    { ys: -0.26, mx: 18, my: 14 },
+    { ys: -0.4, mx: -20, my: -22 },
+  ];
+  let mxN = 0, myN = 0, sy = 0;
+  function applyOrbs(){
+    orbs.forEach((o, i)=>{
+      const c = orbConfig[i] || orbConfig[0];
+      const tx = sy * 0 + mxN * c.mx;
+      const ty = sy * c.ys + myN * c.my;
+      o.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+    });
+  }
+  let scheduled = false;
+  function schedule(){ if(!scheduled){ scheduled = true; requestAnimationFrame(()=>{ applyOrbs(); scheduled = false; }); } }
+  window.addEventListener('scroll', ()=>{ sy = window.scrollY; schedule(); }, { passive:true });
+  window.addEventListener('mousemove', e=>{
+    mxN = (e.clientX/window.innerWidth - 0.5) * 2;
+    myN = (e.clientY/window.innerHeight - 0.5) * 2;
+    schedule();
+  }, { passive:true });
+  applyOrbs();
+
+  // ===== mobile menu =====
+  const mt = document.getElementById('menuToggle');
+  const mn = document.getElementById('mobileNav');
+  function closeMenu(){ document.body.classList.remove('menu-open'); }
+  if (mt){ mt.addEventListener('click', ()=>{ document.body.classList.toggle('menu-open'); }); }
+  if (mn){ mn.querySelectorAll('a').forEach(a=>a.addEventListener('click', closeMenu)); }
+
+  // ===== i18n =====
+  const dict = { pt:{}, en:{
+    'nav-prop':'Proposition','nav-pillars':'What we do','nav-results':'Results','nav-method':'Method','nav-henrick':'Henrick',
+    'cta-primary':'Request diagnostic','cta-secondary':'How it works',
+    'hero-eyebrow':'Growth Infrastructure',
+    'hero-h1a':'More time,','hero-h1b':'less cost,','hero-h1c':'operation in order.',
+    'hero-sub':'We give hours back to your team, cut fixed expense and organize production — so the company grows without inflating headcount, rework or operational noise.',
+    'meta-k1':'Edition','meta-v1':'April · 2026','meta-k2':'Focus','meta-v2':'Productivity · Standardization · Efficiency','meta-k3':'Modality','meta-v3':'Direct operational application',
+    'hero-tag':'Time · Cost · Operational order',
+    'prop-eye':'01 · Who we are','prop-h2':'Structuring operations with applied AI.',
+    'prop-p1':'Axioma designs operational infrastructure with AI applied to the company\'s reality. We don\'t use generic prompts or loose tools — the real gain is in <em>structuring</em> AI inside the operation, with human review in control and full alignment with the technical standard.',
+    'prop-quote':'The deliverable isn\'t a loose experiment: it\'s an operational layer that accelerates repetitive steps, organizes production and increases productivity without compromising quality.',
+    'prop-quote-who':'— Axioma Principle',
+    'pillars-eye':'02 · What we do','pillars-h2':'Three integrated fronts, one infrastructure.','pillars-p':'The Axioma deliverable combines three complementary layers that turn loose AI into reliable operational infrastructure.',
+    'pillar1-h':'Specialized agents','pillar1-p':'Agents segmented by task type, reducing hallucination and preserving the internal technical standard.',
+    'pillar2-h':'Operational automations','pillar2-p':'Workflow architecture with AI support to accelerate repetitive steps, with full human control over output.',
+    'pillar3-h':'Direct operational application','pillar3-p':'Direct implementation in business environments — operations, sales and technical production.',
+    'res-eye':'03 · Observed results','res-h2':'Distinct verticals, measurable gain.','res-p':'Real cases across distinct verticals — versatility and consistency.',
+    'res-c1-case':'Case 01 · Law','res-c1-label':'Time reduction','res-c1-h':'Law firm.','res-c1-p':'Time to produce legal documents reduced from 2–4 hours to 20–30 minutes, while maintaining the firm\'s standard and human review in control.',
+    'res-c2-case':'Case 02 · Marketing','res-c2-label':'Capacity increase','res-c2-h':'Marketing agency.','res-c2-p':'Video production workflow structured with AI. Capacity doubled — from 1 video every 2 hours to 1 per hour, with quality preserved.',
+    'res-prin-h':'The principle in action','res-prin-p':'The gain didn\'t come from a single AI tool, but from correctly structuring the operation — agents designed for the company, workflows architected for repetitive steps and human review kept in control.',
+    'imp-eye':'04 · Where it impacts','imp-h2':'Direct impact on operations.','imp-p':'AI structuring reorganizes critical points, translating to measurable gain on multiple fronts simultaneously.',
+    'imp-1h':'Cost reduction','imp-1p':'Lower fixed expense for tasks now executed with structured AI support.',
+    'imp-2h':'Capacity expansion','imp-2p':'Higher production volume without proportional team or workload increase.',
+    'imp-3h':'Process standardization','imp-3p':'Uniform output within technical standard, reducing rework and quality variation.',
+    'imp-4h':'Operational control','imp-4p':'More visibility over internal flows, bottlenecks and inefficiency points.',
+    'imp-5h':'Team release','imp-5p':'Professionals leave repetitive tasks and operate at higher-value layers.',
+    'imp-6h':'Scale capacity','imp-6p':'Architecture designed to grow with the company — no rework as volume increases.',
+    'per-eye':'05 · Who it\'s for','per-h2':'Profile of company served.','per-p':'Axioma works with companies that have an active operation, where significant team time is consumed by tasks structurable with AI.',
+    'per-1':'High-volume repetitive production — documents, content, files, support.',
+    'per-2':'Operations dependent on multiple systems with fragile integration.',
+    'per-3':'High fixed operational cost relative to delivered output.',
+    'per-4':'Companies that want to scale without proportionally growing payroll or structure.',
+    'per-5':'Organizations noticing internal disorganization or frequent rework.',
+    'met-eye':'06 · How it works','met-h2':'Implementation method.','met-p':'Before any AI application, we understand the operational reality. Implementation only comes after the diagnostic.',
+    'met-1h':'Operational diagnostic','met-1p':'Understanding current operation, critical flows and internal dependencies.',
+    'met-2h':'Bottleneck mapping','met-2p':'Points of greatest time waste, manual dependence or systemic inefficiency.',
+    'met-3h':'Solution design','met-3p':'Specific architecture: specialized agents, automations and workflow structure.',
+    'met-4h':'Implementation & follow-up','met-4p':'Application in real operation, with human review kept in control.',
+    'hen-eye':'07 · Who leads','hen-h2':'Four years studying AI. Focused on turning theory into result.',
+    'hen-p1':'Henrick Nantes is the architect behind the Axioma method. Four years deep in applied AI, he translates technology into concrete operational gain — not isolated demonstration.',
+    'hen-p2':'The motivation is direct: solve real operational problems and see solutions produce measurable result. That logic guides every project.',
+    'hen-s1':'Years studying applied AI','hen-s2':'Time reduction (Law)','hen-s3':'Production capacity (Marketing)',
+    'hen-role':'Architect · Growth<br/>Infrastructure with AI',
+    'diag-eye':'08 · Where we start','diag-h2':'Initial Operational Diagnostic.','diag-p':'A focused, structured conversation to understand the current operation, identify inefficiency points and assess where there\'s real space for gain — before any implementation proposal.',
+    'diag-cta':'Schedule via WhatsApp','diag-cta2':'Or fill out the form',
+    'diag-1':'Mapping of the current operation\'s critical flows.','diag-2':'Identification of bottlenecks and structuring opportunities.','diag-3':'Clear indication of viable next steps.','diag-4':'No-commitment conversation, conducted directly by Henrick.',
+    'form-eye':'09 · Direct contact','form-h2':'Prefer another channel?','form-p':'Use the form on the side — we reply within 24 business hours.',
+    'form-loc-k':'Service','form-loc-v':'Remote · Brazil and LATAM',
+    'form-name':'Name','form-company':'Company','form-email':'Email','form-phone':'Phone / WhatsApp','form-segment':'Company segment','form-msg':'Tell us briefly about the operation','form-submit':'Request diagnostic','form-note':'Reply within 24 business hours. No cost at this stage.',
+    'faq-eye':'10 · Frequently asked','faq-h2':'Common questions before the diagnostic.','faq-p':'Points that usually come up in the first conversation.',
+    'faq-1q':'Do you work with ready-made prompts or off-the-shelf tools?','faq-1a':'No. We design the operational infrastructure with AI applied to the company\'s reality.',
+    'faq-2q':'Does the AI replace the team or do reviews automatically?','faq-2a':'No. Human review is kept in control. AI accelerates repetitive steps — the team operates at higher-value layers.',
+    'faq-3q':'How long does a typical implementation take?','faq-3a':'Depends on the scope identified in the diagnostic. The diagnostic itself indicates next steps with a realistic timeline.',
+    'faq-4q':'Does it work for small companies or only large operations?','faq-4a':'The criterion is the presence of tasks structurable with AI. Both lean and larger operations qualify.',
+    'faq-5q':'Does the Initial Operational Diagnostic have a cost?','faq-5a':'No. No cost at this stage, no contract commitment.',
+    'faq-6q':'Is company data secure during the process?','faq-6a':'Architecture respects the company\'s technical standard and internal policies. Confidentiality is formally addressed before any application.',
+    'foot-tag':'Growth Infrastructure with AI. Structuring business operations with AI applied to productivity, standardization and efficiency.',
+    'foot-nav':'Navigation','foot-cont':'Contact','foot-edition':'Edition · April 2026','float-cta':'Schedule meeting'
+  }};
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ dict.pt[el.dataset.i18n] = el.innerHTML; });
+  function setLang(lang){
+    document.body.dataset.lang = lang;
+    document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const k = el.dataset.i18n;
+      if (dict[lang][k] !== undefined) el.innerHTML = dict[lang][k];
+    });
+    document.querySelectorAll('[data-lang-btn]').forEach(b=>b.classList.toggle('active', b.dataset.langBtn === lang));
+    splitLines();
+  }
+  document.querySelectorAll('[data-lang-btn]').forEach(b=>b.addEventListener('click', ()=>setLang(b.dataset.langBtn)));
+</script>
+
+</body>
+</html>
