@@ -995,6 +995,45 @@
     .ambient-grain{ opacity:0.55; }
   }
 
+
+  /* ============================================
+     PERFORMANCE — eliminar jank no scroll mobile
+     ============================================ */
+  @media (max-width:960px){
+    /* Remover blur dos orbs — principal causa de travamento */
+    .ambient-stage .orb{ filter:none !important; opacity:0.28 !important; }
+
+    /* Desativar backdrop-filter no header mobile — muito caro */
+    header.site{
+      backdrop-filter:none !important;
+      -webkit-backdrop-filter:none !important;
+      background:rgba(6,16,31,0.92) !important;
+    }
+
+    /* Desativar grain overlay mobile — causa repaint constante */
+    .ambient-grain{ display:none; }
+
+    /* GPU hint nas camadas que se movem */
+    .ambient-stage, .hero .grid-bg, .orb{
+      transform:translateZ(0);
+      backface-visibility:hidden;
+    }
+
+    /* Sections: isolar repaint */
+    section{ contain:layout style; }
+
+    /* Desativar parallax do hero grid no mobile */
+    .hero .grid-bg{ animation:gridDrift 45s linear infinite; will-change:auto; transform:none !important; }
+
+    /* Constellation mais leve mobile */
+    .constellation{ opacity:0.3; }
+  }
+
+  /* Smooth scrolling nativo para o body */
+  @media (max-width:960px){
+    html{ -webkit-overflow-scrolling:touch; scroll-behavior:auto; }
+  }
+
 </style>
 
 <!-- ===== STRUCTURED DATA / SCHEMA.ORG ===== -->
@@ -1787,19 +1826,43 @@
     });
   }
 
-  // ===== header scroll + progress + float CTA =====
+  // ===== UNIFIED SCROLL LOOP — um único rAF para tudo =====
   const header = document.getElementById('header');
   const bar = document.getElementById('scrollBar');
   const fc = document.getElementById('floatCta');
-  function onScroll() {
+  const heroGrid = document.getElementById('heroGrid');
+
+  let lastScrollY = 0, ticking = false;
+
+  function processScroll() {
     const y = window.scrollY;
-    header.classList.toggle('scrolled', y > 30);
-    fc.classList.toggle('visible', y > 600);
     const h = document.documentElement.scrollHeight - window.innerHeight;
+
+    // header
+    header.classList.toggle('scrolled', y > 30);
+    // float cta
+    fc.classList.toggle('visible', y > 600);
+    // progress bar
     bar.style.width = (Math.min(y / h, 1) * 100) + '%';
+    // orbs (skip on touch for perf)
+    if (!isTouch) {
+      sy = y;
+      applyOrbs();
+      // hero grid parallax desktop only
+      if (heroGrid) heroGrid.style.transform = `translate3d(0,${y * 0.22}px,0)`;
+    }
+    ticking = false;
   }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+
+  window.addEventListener('scroll', () => {
+    lastScrollY = window.scrollY;
+    if (!ticking) {
+      requestAnimationFrame(processScroll);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  processScroll();
 
   // ===== reveal on scroll =====
   const io = new IntersectionObserver(entries => {
@@ -1906,14 +1969,7 @@
   }
   applyOrbs();
 
-  // ===== hero grid scroll parallax =====
-  const heroGrid = document.getElementById('heroGrid');
-  function applyHeroGrid() {
-    if (!heroGrid) return;
-    const y = window.scrollY;
-    heroGrid.style.transform = `translate3d(0, ${y * 0.22}px, 0)`;
-  }
-  window.addEventListener('scroll', applyHeroGrid, { passive: true });
+  // heroGrid parallax unified into processScroll above
 
   // ===== mobile menu =====
   const mt = document.getElementById('menuToggle');
@@ -2029,7 +2085,11 @@
         ctx.fillStyle = 'rgba(168,199,255,0.55)';
         ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
       }
-      requestAnimationFrame(draw);
+      if (isTouch) {
+        setTimeout(() => requestAnimationFrame(draw), 33); // 30fps mobile
+      } else {
+        requestAnimationFrame(draw);
+      }
     }
     init();
     window.addEventListener('resize', init);
@@ -2194,15 +2254,7 @@
       el.addEventListener('touchend', () => { setTimeout(() => el.style.willChange = '', 400); }, { passive: true });
     });
 
-    // Scroll progress dos orbs no mobile (só scroll, sem mouse)
-    window.addEventListener('scroll', () => {
-      sy = window.scrollY;
-      const pct = sy / (document.documentElement.scrollHeight - window.innerHeight);
-      orbs.forEach((o, i) => {
-        const c = orbConfig[i] || orbConfig[0];
-        o.style.transform = `translate3d(0, ${sy * c.ys}px, 0)`;
-      });
-    }, { passive: true });
+    // orbs mobile: desativados para performance (estáticos)
 
     // Constellation mais responsiva no mobile: mais pontos visíveis
     const mobileConst = document.getElementById('constellation');
