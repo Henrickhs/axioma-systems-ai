@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://henrickhs.github.io/axioma-systems-ai/sitemap.xml
+
+# Axioma Systems AI
+# https://henrickhs.github.io/axioma-systems-ai/
